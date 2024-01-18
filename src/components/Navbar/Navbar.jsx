@@ -15,7 +15,7 @@ const Navbar = () => {
 
           <Link to="/" className="flex items-center">
             <img
-              src="src\assets\images\SoulNect-Logo.png"
+              src="../../assets/images/SoulNect-Logo.png"
               className="mr-3 h-12"
               alt="Logo"
             />
