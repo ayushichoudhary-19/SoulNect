@@ -1,8 +1,3 @@
-# React + Vite
+https://dribbble.com/shots/16447942-Creative-Soft-Color-Landing-Page-Design/attachments/11149628?mode=media
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![image](https://github.com/ayushichoudhary-19/SoulNect/assets/73214455/e1066eb8-f013-469f-9ea7-450c294b3661)
