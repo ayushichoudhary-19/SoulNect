@@ -34,7 +34,7 @@ export default function Home() {
         <div className="mx-auto w-full max-w-7xl">
             <aside className="flex flex-col overflow-hidden text-black rounded-lg sm:mx-16 xl:mx-0 sm:py-16">
                 <div className="hidden sm:block absolute pt-12 items-center justify-center">
-    <img className="w-3/5 sm:w-2/5 md:w-2/3 lg:w-3/4 xl:w-3/5" src="assets/images/SoulNect-Logo.png" alt="image1" />
+    <img className="w-3/5 sm:w-2/5 md:w-2/3 lg:w-3/4 xl:w-3/5" src="assets/images/SoulNect-Logo.png" alt="image1" loading="lazy"/>
 </div>
                 <div className="relative max-w-screen-xl px-4 pb-20 pt-10 sm:py-10 ml-100 sm:px-6 lg:px-8 flex-col sm:flex-row">
                     <div className="max-w-xl space-y-8 text-center sm:text-right sm:ml-auto sm:w-1/2">
