@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
+
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -14,8 +15,8 @@ const Navbar = () => {
         <div className='flex flex-wrap justify-between items-center w-full lg:px-10 md:px-10'>
 
           <Link to="/" className="flex items-center">
-            <img
-              src="../../assets/images/SoulNect-Logo.png"
+          <img 
+              src="assets/images/SoulNect-Logo.png"
               className="mr-3 h-12"
               alt="Logo"
             />

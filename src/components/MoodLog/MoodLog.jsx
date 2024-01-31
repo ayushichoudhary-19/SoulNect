@@ -14,7 +14,7 @@ const MoodLog = () => {
             <p id="countdown"></p>
           </div>
           <img
-            src="src\assets\images\Mood-Tracker-img.jpg"
+            src="assets/images/Mood-Tracker-img.jpg"
             className="w-65 p-8 pt-0 pb-5 pl-5"
             alt="Mood Tracker"
           />
@@ -23,7 +23,7 @@ const MoodLog = () => {
           <button id="happy" className="pl-0 pr-100 h-auto w-100 bg-white shadow-md border-none rounded-md m-1% 10% 1% 2% w-70vh h-15vh flex flex-row">
             <span className="text-left p-2 pt-1 pl-5">
               <img
-                src="src\assets\images\moodEmojis\happy.png"
+                src="assets/images/moodEmojis/happy.png"
                 className="w-50 z-1"
                 alt="Happy Emoji"
               />
@@ -33,7 +33,7 @@ const MoodLog = () => {
           <button id="sad" className="p-0 bg-white shadow-md border-none rounded-md m-1% 10% 1% 2% w-70vh h-15vh flex flex-row">
             <span className="text-left p-2 pt-1 pl-5">
               <img
-                src="src\assets\images\moodEmojis\sad.png"
+                src="assets/images/moodEmojis/sad.png"
                 className="w-50 z-1"
                 alt="Sad Emoji"
               />
@@ -43,7 +43,7 @@ const MoodLog = () => {
           <button id="excited" className="p-0 bg-white shadow-md border-none rounded-md m-1% 10% 1% 2% w-70vh h-15vh flex flex-row">
             <span className="text-left p-2 pt-1 pl-5">
               <img
-                src="src\assets\images\moodEmojis\excited.png"
+                src="assets/images/moodEmojis/excited.png"
                 className="w-50 z-1"
                 alt="Excited Emoji"
               />
@@ -53,7 +53,7 @@ const MoodLog = () => {
           <button id="angry" className="p-0 bg-white shadow-md border-none rounded-md m-1% 10% 1% 2% w-70vh h-15vh flex flex-row">
             <span className="text-left p-2 pt-1 pl-5">
               <img
-                src="src\assets\images\moodEmojis\angry.png"
+                src="assets/images/moodEmojis/angry.png"
                 className="w-50 z-1"
                 alt="Angry Emoji"
               />
@@ -63,7 +63,7 @@ const MoodLog = () => {
           <button id="stressed" className="p-0 bg-white shadow-md border-none rounded-md m-1% 10% 1% 2% w-70vh h-15vh flex flex-row">
             <span className="text-left p-2 pt-1 pl-5">
               <img
-                src="src\assets\images\moodEmojis\stressed.png"
+                src="assets/images/moodEmojis/stressed.png"
                 className="w-50 z-1"
                 alt="Stressed Emoji"
               />
