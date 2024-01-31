@@ -12,6 +12,10 @@ This markdown serves as a central hub linking to individual written records of t
 
 Encountered challenges with image paths in JSX files. Explored different solutions, from direct path usage to image imports, and ultimately resolved the issue by leveraging the `public` folder. Key insights gained into JSX file behavior and build tool configurations.
 
+### 2. [Direct Access to Routes Resulting in 404 Error](problems/Route404Problem.md)
+
+Faced issues with direct access to routes resulting in 404 errors. Explored Vercel configurations and resolved the issue by creating a `vercel.json` file with a rewrite rule. Learned about the importance of proper client-side routing configuration.
+
 ---
 
 Feel free to navigate to individual problem records to explore in-depth details about each issue and its resolution.
