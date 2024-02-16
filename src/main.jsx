@@ -8,6 +8,7 @@ import { MoodLogPage } from './pages/MoodLogPage.jsx'
 import Home from './components/Home/Home.jsx'
 import Footer from './components/Footer/Footer.jsx'
 import Error404 from './components/Error404/Error404.jsx'
+import AddJournalEntry from './pages/AddJournalEntry.jsx'
 
 
 const navrouter = createBrowserRouter([
@@ -21,6 +22,10 @@ const navrouter = createBrowserRouter([
     {
       path: 'moodlog',
       element: <MoodLogPage/>
+    },
+    {
+      path: 'myjournal',
+      element: <AddJournalEntry/>
     },
     {
       path: '*',
