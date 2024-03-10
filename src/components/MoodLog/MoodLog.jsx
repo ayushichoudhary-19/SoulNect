@@ -20,7 +20,7 @@ const MoodLog = () => {
           />
         </li>
         <li className="pt-0">
-          <button id="happy" className="pl-0 pr-100 h-auto w-100 bg-white shadow-md border-none rounded-md m-1% 10% 1% 2% w-70vh h-15vh flex flex-row">
+          <button id="happy" className="pr-100 bg-white shadow-md border-none rounded-md m-1% 10% 1% 2% w-70vh h-15vh flex flex-row">
             <span className="text-left p-2 pt-1 pl-5">
               <img
                 src="assets/images/moodEmojis/happy.png"
