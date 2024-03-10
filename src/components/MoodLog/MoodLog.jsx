@@ -27,25 +27,6 @@ const MoodLog = () => {
               id="happy"
               onClick={handleClick}
               className="m-3 bg-white shadow-md hover:shadow-blue-200 hover:-translate-y-2 transition duration-300 ease-in-out border-none rounded-md flex items-center p-2">
-    <div className="ml-10 mr-0 w-full max-w-7xl my-12" id="mood-log">
-      <h1 className="text-4xl text-center sm:text-5xl xl:text-6xl xl:text-7xl 2xl:text-8xl">
-      How do you <span className='text-vibrant-yellow'>feel </span>today?
-      </h1>
-      <ul className="md:flex md:flex-column sm:flex-row w-1000 ">
-        <li>
-          <div className="bg-vibrant-yellow ml-30 mr-5 rounded-md transition-opacity duration-1000 ease">
-            <p id="result"></p>
-            <p id="countdown"></p>
-          </div>
-          <img
-            src="assets/images/Mood-Tracker-img.jpg"
-            className="w-65 p-8 pt-0 pb-5 pl-5"
-            alt="Mood Tracker"
-          />
-        </li>
-        <li className="pt-0">
-          <button id="happy" className="pr-100 bg-white shadow-md border-none rounded-md m-1% 10% 1% 2% w-70vh h-15vh flex flex-row">
-            <span className="text-left p-2 pt-1 pl-5">
               <img
                 src="assets/images/moodEmojis/happy.png"
                 className="w-1/5 z-1"
