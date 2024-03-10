@@ -8,7 +8,8 @@ import { MoodLogPage } from './pages/MoodLogPage.jsx'
 import Home from './components/Home/Home.jsx'
 import Footer from './components/Footer/Footer.jsx'
 import Error404 from './components/Error404/Error404.jsx'
-
+import AddJournalEntry from './pages/AddJournalEntry.jsx'
+import { MeditationPage } from './pages/MeditationPage.jsx'
 
 const navrouter = createBrowserRouter([
   {path: '/',
@@ -28,7 +29,7 @@ const navrouter = createBrowserRouter([
     },
     {
       path: 'meditation',
-      element: <Meditation/>
+      element: <MeditationPage/>
     },
     {
       path: '*',

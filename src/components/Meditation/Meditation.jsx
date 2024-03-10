@@ -3,9 +3,10 @@ import PlaylistCard from './PlaylistCard';
 
 const Meditation = () => {
   const playlistIds = [
-    "4KIIAFI5oqKfJOCM9tt6k4",
     "2fM4jTPIlOuqdZxHZSDAMS",
-    "6SCi0osSMyQiHzcRcu0EZY",
+    "4WPdBlFvoiVDrdpqjGQRLb",
+    "5Q1ioC0HpMLauTOapXxmXH",
+    "3wcXgWR1cbj0VnomIHIRXO"
   ];
 
   return (
