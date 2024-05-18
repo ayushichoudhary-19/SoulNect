@@ -10,6 +10,8 @@ import Footer from './components/Footer/Footer.jsx'
 import Error404 from './components/Error404/Error404.jsx'
 import AddJournalEntry from './pages/AddJournalEntry.jsx'
 import { MeditationPage } from './pages/MeditationPage.jsx'
+import SignIn from './components/Login/Signin.jsx'
+import MoodDashboard from './components/MoodDashboard/moodDashboard.jsx'
 
 const navrouter = createBrowserRouter([
   {path: '/',
@@ -35,6 +37,14 @@ const navrouter = createBrowserRouter([
       path: '*',
       element: <Error404/>
     },
+    {
+      path: 'signin',
+      element: <SignIn/>
+    },
+    {
+      path: 'moodDashboard',
+      element: <MoodDashboard/>
+    }
   ]
   }
 ])

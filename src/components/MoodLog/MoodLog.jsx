@@ -1,4 +1,5 @@
 import React,{useState} from 'react';
+import { Link } from 'react-router-dom';
 
 const MoodLog = () => {
   
@@ -84,9 +85,11 @@ const MoodLog = () => {
       <div id="mood-dashboard-link">
         Click here to check your Track your mood
         <button id="mood-dashboard-button">
-          <a href="moodDashboard.html">
+          <Link
+          to="moodDashboard"
+           >
             <span id="mood-dashboard-word">MOOD DASHBOARD</span>
-          </a>
+          </Link>
         </button>
       </div>
     </>

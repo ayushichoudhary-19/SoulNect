@@ -109,7 +109,7 @@ const Navbar = () => {
                 </NavLink>
               </li>
               <li className='flex items-center'>
-                <button to="/login" className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'>
+                <button to="signin" className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'>
                   Login
                 </button>
               </li>
@@ -172,8 +172,12 @@ const Navbar = () => {
               Community
             </NavLink>
 
-            <button to="/login" className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'>
+            <button
+            className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
+            >
+              <Link to="signin">
               Login
+              </Link>
             </button>
           </div>
         )}

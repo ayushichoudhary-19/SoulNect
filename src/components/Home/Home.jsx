@@ -1,4 +1,5 @@
 import React from "react";
+import { signInWithGoogle } from "../../auth";
 import FeatureCard from "./FeatureCard";
 const featuresData = [
     {
