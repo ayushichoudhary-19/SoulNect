@@ -1,9 +1,35 @@
-import React, { useState } from 'react';
+import { signOut } from '../../auth';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      setCurrentUser(user);
+    }
+  }, []);
+
+  const handleSignOut = () => {
+    signOut();
+    localStorage.removeItem('user');
+    setCurrentUser(null);
+    toast.success('Logged out successfully!', {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -13,16 +39,15 @@ const Navbar = () => {
     <header className='sticky top-0 z-50'>
       <nav className='bg-white px-4 lg:px-6 py-2.5'>
         <div className='flex flex-wrap justify-between items-center w-full lg:px-10 md:px-10'>
-
           <Link to="/" className="flex items-center">
-          <img 
+            <img 
               src="assets/images/SoulNect-Logo.png"
               className="mr-3 h-12"
               alt="Logo"
             />
           </Link>
 
-        {/* Hambuger Icon */}
+          {/* Hamburger Icon */}
           <div className="lg:hidden">
             <button
               onClick={toggleMobileMenu}
@@ -42,11 +67,11 @@ const Navbar = () => {
             </button>
           </div>
         
-        {/* Mobile Menu */}
+          {/* Desktop Menu */}
           <div
             className={`hidden lg:flex justify-between items-center w-full lg:w-auto lg:order-1 ${
               mobileMenuOpen ? 'flex' : 'hidden'
-            }`} 
+            }`}
           >
             <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
               <li className='flex items-center'>
@@ -59,7 +84,6 @@ const Navbar = () => {
                   Home
                 </NavLink>
               </li>
-
               <li className='flex items-center'>
                 <NavLink
                   className={() =>
@@ -108,11 +132,25 @@ const Navbar = () => {
                   Community
                 </NavLink>
               </li>
-              <li className='flex items-center'>
-                <button to="signin" className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'>
-                  Login
-                </button>
-              </li>
+              {currentUser ? (
+                <li className='flex items-center'>
+                  <button 
+                    onClick={handleSignOut}
+                    className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
+                  >
+                    Logout
+                  </button>
+                </li>
+              ) : (
+                <li className='flex items-center'>
+                  <Link
+                    to="signin"
+                    className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
+                  >
+                    Login
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -172,16 +210,26 @@ const Navbar = () => {
               Community
             </NavLink>
 
-            <button
-            className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
-            >
-              <Link to="signin">
-              Login
-              </Link>
-            </button>
+            {currentUser ? (
+              <button
+                onClick={handleSignOut}
+                className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
+              >
+                Logout
+              </button>
+            ) : (
+              <button
+                className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
+              >
+                <Link to="signin">
+                  Login
+                </Link>
+              </button>
+            )}
           </div>
         )}
       </nav>
+      <ToastContainer />
     </header>
   );
 }

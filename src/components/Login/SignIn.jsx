@@ -1,7 +1,35 @@
-import React from "react";
-import { signInWithGoogle } from "../../auth"; // Adjust the path if necessary
+import React, { useEffect, useState } from "react";
+import { signInWithGoogle } from "../../auth";
+import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
+  const navigate = useNavigate();
+  const [showForm, setShowForm] = useState(true);
+  
+  useEffect(() => {
+    const uid = JSON.parse(localStorage.getItem('user'));
+    if(uid) {
+      setShowForm(false);
+      console.log(uid);
+    }
+  }, []);
+
+  const signIn = async () => {
+    try {
+      const res = await signInWithGoogle();
+      localStorage.setItem('user', JSON.stringify(res.user));
+      console.log(res.user.uid);
+      setShowForm(false);
+      window.onload = () => {
+        navigate('/');
+      };
+      window.location.reload();
+    } catch (error) {
+      console.log(error.message);
+    }
+    
+  }
+
   return (
     <div className="h-[80vh] items-center sm:flex block justify-center px-5 lg:px-0">
       <div className="max-w-screen-lg h-[80%] bg-white border block shadow sm:rounded-lg md:flex justify-center flex-1">
@@ -14,6 +42,7 @@ const SignIn = () => {
           ></div>
         </div>
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+          {showForm ? (
           <div className="flex flex-col items-center justify-center">
             <div className="text-center">
               <h1 className="text-2xl xl:text-4xl boldfont-extra text-soft-orange mt-20">
@@ -27,7 +56,7 @@ const SignIn = () => {
               <div className="mx-auto max-w-xs flex flex-col gap-4">
                 <button
                   className="mt-5 bg-soft-orange text-black w-full py-4 rounded-lg hover:bg-soft-pink transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
-                  onClick={signInWithGoogle}
+                  onClick={signIn}
                 >
                   <svg
                     className="w-6 h-6 -ml-2"
@@ -47,6 +76,27 @@ const SignIn = () => {
               </div>
             </div>
           </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-center">
+                <h1 className="text-2xl xl:text-4xl boldfont-extra text-soft-orange mt-20">
+                  Welcome
+                </h1>
+                <p className="text-[12px] text-gray-500">
+                  You have successfully signed in
+                </p>
+                <button
+                  className="mt-5 bg-soft-orange text-black w-full py-4 rounded-lg hover:bg-soft-pink transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                  onClick={() => {
+                    navigate('/');
+                  }
+                  }
+                >
+                Home Page
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

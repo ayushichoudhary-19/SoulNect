@@ -7,7 +7,7 @@ const provider = new GoogleAuthProvider();
 
 export const signInWithGoogle = async () => {
     try {
-        await signInWithPopup(auth, provider);
+        return await signInWithPopup(auth, provider);
     } catch (error) {
         console.log(error.message);
     }
@@ -40,6 +40,15 @@ export const signIn = async (email, password) => {
 export const resetPassword = async (email) => {
     try {
         await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+export const signOut = async () => {
+    try {
+        localStorage.removeItem('user');
+        await auth.signOut();
     } catch (error) {
         console.log(error.message);
     }
