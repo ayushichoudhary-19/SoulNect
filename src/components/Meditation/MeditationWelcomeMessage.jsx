@@ -8,10 +8,10 @@ const MoodEntryMessage = () => {
         <br></br>
         Spotify  <span className='text-soft-green'>Meditation Playlists</span>
         </h1>
-        <div className="bg-vibrant-yellow ml-30 mr-5 rounded-md transition-opacity duration-1000 ease">
+        {/* <div className="bg-vibrant-yellow ml-30 mr-5 rounded-md transition-opacity duration-1000 ease">
             <p id="result"></p>
             <p id="countdown"></p>
-          </div>
+          </div> */}
         </div>
         </>
     );

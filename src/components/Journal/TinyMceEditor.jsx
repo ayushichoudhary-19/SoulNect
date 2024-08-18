@@ -45,8 +45,6 @@ export default function TinyMCEEditor({ value, onEditorChange, disabled }) {
             }
           });
         },
-      }}
-      initialValue="Reflect on today's moments, experiences, or emotions, and Jot down your thoughts and feelings here..."
-    />
+      }}/>
   );
 }

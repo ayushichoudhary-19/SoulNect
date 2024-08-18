@@ -1,25 +1,25 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  console.log('UserProvider');
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
-      setUser(storedUser);
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      console.log('User ID found:', userId);
+      setUser({ userId });
     }
   }, []);
 
-  const login = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
+  const login = (userId) => {
+    localStorage.setItem('userId', userId);
+    setUser({ userId });
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
     setUser(null);
   };
 
@@ -28,4 +28,12 @@ export const UserProvider = ({ children }) => {
       {children}
     </UserContext.Provider>
   );
+};
+
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
 };

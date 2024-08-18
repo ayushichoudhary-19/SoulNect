@@ -1,19 +1,24 @@
-import React from "react";
-import { signInWithGoogle } from "../../auth";
+import React, {useState, useEffect} from "react";
 import FeatureCard from "./FeatureCard";
+import { NavLink, Router } from "react-router-dom";
+
+
 const featuresData = [
     {
       icon: "assets/images/Home/moodlog.png",
+      link: "moodlog",
       title: "Mood Log",
       description: "Log your moods and track them over time with an interactive graph on the dashboard, gaining insights into your emotional well-being.",
     },
     {
       icon: "assets/images/Home/journal.png",
+      link: "myjournal",
       title: "Journal",
       description: "Express yourself freely in a personal journal, with the ability to revisit and reflect on your thoughts and experiences over time.",
     },
     {
       icon: "assets/images/Home/meditate.png",
+      link: "meditation",
       title: "Meditation",
       description: "Explore guided meditations to nurture your mind and soul, promoting mindfulness and relaxation for a balanced and centered lifestyle.",
     },
@@ -30,6 +35,17 @@ const featuresData = [
   ];
   
 export default function Home() {
+  const [navigateToSignIn, setNavigateToSignIn] = useState(true);
+
+useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      setNavigateToSignIn(false);
+    }
+    else {
+      setNavigateToSignIn(true);
+    }
+}, []);
     return (
         <>
         <div className="mx-auto w-full max-w-7xl">
@@ -50,7 +66,10 @@ export default function Home() {
                 </div>
             </aside>
         </div>
-
+        <div className="w-full flex items-center justify-center">
+          <NavLink className="p-4 flex items-center justify-center gap-2 bg-soft-orange rounded hover:bg-soft-pink duration-75" to={ navigateToSignIn? "/signin" : "/moodlog"}>Let's Begin Healing 
+          <img src="assets/images/Home/chevron.png" className="size-5"/></NavLink>
+        </div>
         <div>
         <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-center my-12">
                         Features
@@ -59,6 +78,7 @@ export default function Home() {
         {featuresData.map((feature, index) => (
             <FeatureCard
               key={index}
+              link={feature.link}
               icon={feature.icon}
               title={feature.title}
               description={feature.description}

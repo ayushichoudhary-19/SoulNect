@@ -1,216 +1,156 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { getAuth, signOut } from 'firebase/auth';
-import Chart from 'chart.js/auto';
+import React, { useEffect, useState, useRef } from "react";
+import axios from "axios";
+import Chart from "chart.js/auto";
+import "chartjs-adapter-date-fns";
 
-// Firebase configuration (ensure this is defined correctly)
-import { firebaseConfig } from '../../firebase';
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+const backendURL = "http://localhost:3000";
 
 const MoodDashboard = () => {
-    const [lineChart, setLineChart] = useState(null);
-    const [barChart, setBarChart] = useState(null);
+  const [moodData, setMoodData] = useState([]);
+  const [userFound, setUserFound] = useState(true);
+  const chartRef = useRef(null);
 
-    const lineChartRef = useRef(null);
-    const barChartRef = useRef(null);
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      fetchMoodData(userId);
+    } else {
+      setUserFound(false);
+    }
+  }, []);
 
-    useEffect(() => {
-        const userUID = sessionStorage.getItem('userUID');
-        if (!userUID) return;
+  useEffect(() => {
+    if (moodData.length > 0) {
+      createChart();
+    }
+  }, [moodData]);
 
-        const moodTrackRef = collection(db, "Users", userUID, "moodTrack");
+  const fetchMoodData = async (userId) => {
+    try {
+      const response = await axios.get(`${backendURL}/api/moodlog/${userId}`);
+      setMoodData(response.data);
+    } catch (error) {
+      console.error("Error fetching mood data:", error);
+    }
+  };
 
-        const dates = [];
-        const moodData = {};
-        const moodCounts = {};
+  const createChart = () => {
+    const ctx = chartRef.current.getContext("2d");
 
-        const fetchData = async () => {
-            const querySnapshot = await getDocs(moodTrackRef);
+    if (chartRef.current.chart) {
+      chartRef.current.chart.destroy();
+    }
 
-            querySnapshot.forEach((doc) => {
-                dates.push(doc.id);
-                const totalDateRecords = querySnapshot.size;
+    const dates = [];
+    const moodValues = [];
 
-                const moodRecords = doc.data().moodRecords;
+    moodData.forEach((log) => {
+      const date = parseDate(log.createdAt);
+      if (date) {
+        dates.push(date);
+        moodValues.push(getMoodValue(log.mood));
+      }
+    });
 
-                moodRecords.forEach((record) => {
-                    const mood = record.mood;
-                    if (!moodData[mood]) {
-                        moodData[mood] = Array(totalDateRecords).fill(0);
-                    }
-                    if (!moodCounts[mood]) {
-                        moodCounts[mood] = 0;
-                    }
-                    const index = dates.indexOf(doc.id);
-                    moodData[mood][index] += 1;
-                    moodCounts[mood] += 1;
-                });
-            });
+    const chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: dates,
+        datasets: [
+          {
+            label: "Mood Over Time",
+            data: moodValues.map((value, index) => ({
+              x: dates[index],
+              y: value,
+            })),
+            borderColor: "rgb(245,232,96)",
+            tension: 0.1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            type: "time",
+            time: {
+              unit: "day",
+              displayFormats: {
+                day: "MMM d",
+              },
+            },
+            title: {
+              display: true,
+              text: "Date",
+            },
+          },
+          y: {
+            beginAtZero: true,
+            max: 5,
+            ticks: {
+              stepSize: 1,
+              callback: function (value) {
+                return ["Very Sad", "Sad", "Neutral", "Happy", "Very Happy"][
+                  value - 1
+                ];
+              },
+            },
+            title: {
+              display: true,
+              text: "Mood",
+            },
+          },
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                const moodIndex = context.parsed.y - 1;
+                return ["Very Sad", "Sad", "Neutral", "Happy", "Very Happy"][
+                  moodIndex
+                ];
+              },
+            },
+          },
+        },
+      },
+    });
 
-            console.log("Dates: ", dates);
-            console.log("Mood Data: ", moodData);
-            console.log("Mood Counts: ", moodCounts);
+    chartRef.current.chart = chart;
+  };
 
-            // Create the line chart
-            if (lineChart) lineChart.destroy();
-            const newLineChart = new Chart(lineChartRef.current, {
-                type: "line",
-                data: {
-                    labels: dates,
-                    datasets: [
-                        {
-                            label: 'Happy',
-                            data: moodData['happy'] || [],
-                            backgroundColor: 'rgba(75, 192, 192, 0.4)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
-                            fill: true,
-                        },
-                        {
-                            label: 'Excited',
-                            data: moodData['excited'] || [],
-                            backgroundColor: 'rgba(5, 92, 192, 0.4)',
-                            borderColor: 'rgba(5, 92, 192, 1)',
-                            borderWidth: 1,
-                            fill: true,
-                        },
-                        {
-                            label: 'Sad',
-                            data: moodData['sad'] || [],
-                            backgroundColor: 'rgba(255, 99, 132, 0.4)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 1,
-                            fill: true,
-                        },
-                        {
-                            label: 'Angry',
-                            data: moodData['angry'] || [],
-                            backgroundColor: 'rgba(55, 25, 206, 0.4)',
-                            borderColor: 'rgba(55, 25, 206, 1)',
-                            borderWidth: 1,
-                            fill: true,
-                        },
-                        {
-                            label: 'Stressed',
-                            data: moodData['stressed'] || [],
-                            backgroundColor: 'rgba(155, 205, 86, 0.4)',
-                            borderColor: 'rgba(155, 205, 86, 1)',
-                            borderWidth: 1,
-                            fill: true,
-                        },
-                    ],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            display: true,
-                            title: {
-                                display: true,
-                                text: "Dates",
-                            },
-                        },
-                        y: {
-                            display: true,
-                            stacked: false,
-                            max: 3,
-                            min: 0,
-                            stepSize: 1,
-                            ticks: {
-                                callback: function(value) {
-                                    return Number.isInteger(value) ? value : '';
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: "Count",
-                            },
-                        },
-                    },
-                },
-            });
-            setLineChart(newLineChart);
+  const getMoodValue = (mood) => {
+    const moodValues = {
+      "very sad": 1,
+      sad: 2,
+      neutral: 2,
+      happy: 4,
+      "very happy": 5,
+    };
+    return moodValues[mood] || 3;
+  };
 
-            // Create the bar chart
-            if (barChart) barChart.destroy();
-            const newBarChart = new Chart(barChartRef.current, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(moodCounts),
-                    datasets: [
-                        {
-                            label: 'Mood Distribution',
-                            data: Object.values(moodCounts),
-                            backgroundColor: [
-                                'rgba(75, 192, 192, 0.4)',
-                                'rgba(255, 99, 132, 0.4)',
-                                'rgba(54, 162, 235, 0.4)',
-                                'rgba(255, 206, 86, 0.4)',
-                                'rgba(155, 205, 86, 0.4)',
-                            ],
-                            borderColor: [
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(155, 205, 86, 1)',
-                            ],
-                            borderWidth: 1,
-                        },
-                    ],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            display: true,
-                            title: {
-                                display: true,
-                                text: "Moods",
-                            },
-                        },
-                        y: {
-                            display: true,
-                            stacked: false,
-                            min: 0,
-                            stepSize: 1,
-                            ticks: {
-                                callback: function(value) {
-                                    return Number.isInteger(value) ? value : '';
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: "Count",
-                            },
-                        },
-                    },
-                },
-            });
-            setBarChart(newBarChart);
-        };
+  const parseDate = (dateString) => {
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? null : date;
+  };
 
-        fetchData();
-    }, [lineChart, barChart]);
-
-    return (
-        <div>
-            <div className="chart">
-                <canvas ref={lineChartRef} id="lineChart" style={{ height: '400px' }}></canvas>
-            </div>
-
-            <div className="chart">
-                <canvas ref={barChartRef} id="barChart" style={{ height: '400px' }}></canvas>
-            </div>
+  return (
+    <div className="mood-dashboard">
+      {!userFound && <p>No user found. Please <span className="text-blue-500 hover:underline hover:cursor-pointer"
+        onClick={() => window.location.href = '/signin'} 
+      >login</span> to view this page.</p>}
+      {userFound && moodData.length === 0 && <p>No mood data found.</p>}
+      {userFound && moodData.length > 0 && (
+        <div
+          className="chart-container"
+          style={{ height: "400px", width: "100%" }}
+        >
+          <canvas ref={chartRef}></canvas>
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
 export default MoodDashboard;

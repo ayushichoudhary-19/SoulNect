@@ -1,24 +1,15 @@
-import { signOut } from '../../auth';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useUser } from '../../store/userContext';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      setCurrentUser(user);
-    }
-  }, []);
+  const { user, logout } = useUser();
 
   const handleSignOut = () => {
-    signOut();
-    localStorage.removeItem('user');
-    setCurrentUser(null);
+    logout();
     toast.success('Logged out successfully!', {
       position: "top-right",
       autoClose: 2000,
@@ -74,7 +65,7 @@ const Navbar = () => {
             }`}
           >
             <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
-              <li className='flex items-center'>
+            <li className='flex items-center'>
                 <NavLink
                   className={() =>
                     `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
@@ -119,6 +110,7 @@ const Navbar = () => {
                   className={() =>
                     `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
                   }
+                  to={`/resources`}
                 >
                   Resources
                 </NavLink>
@@ -128,11 +120,12 @@ const Navbar = () => {
                   className={() =>
                     `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
                   }
+                  to={`/community`}
                 >
                   Community
                 </NavLink>
               </li>
-              {currentUser ? (
+              {user ? (
                 <li className='flex items-center'>
                   <button 
                     onClick={handleSignOut}
@@ -209,8 +202,7 @@ const Navbar = () => {
             >
               Community
             </NavLink>
-
-            {currentUser ? (
+            {user ? (
               <button
                 onClick={handleSignOut}
                 className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
@@ -218,13 +210,12 @@ const Navbar = () => {
                 Logout
               </button>
             ) : (
-              <button
+              <Link
+                to="signin"
                 className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
               >
-                <Link to="signin">
-                  Login
-                </Link>
-              </button>
+                Login
+              </Link>
             )}
           </div>
         )}
