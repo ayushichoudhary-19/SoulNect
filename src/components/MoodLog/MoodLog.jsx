@@ -3,7 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import MoodLogStreak from './MoodLogStreak';
-import MoodDashboard from '../MoodDashboard/MoodDashboard';
+import MoodDashboard from '../MoodDashboard/moodDashboard';
 import { useUser } from '../../store/userContext';
 
 const backendURL = 'http://localhost:3000';
