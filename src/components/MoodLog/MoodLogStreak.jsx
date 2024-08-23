@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const backendURL = 'http://localhost:3000';
-
 const MoodLogStreak = () => {
     const [streakData, setStreakData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -13,7 +11,6 @@ const MoodLogStreak = () => {
         if (userId) {
             fetchStreakData(userId);
         } else {
-            // Set default streak data when userId is not found
             setStreakData(generateDefaultStreakData());
             setLoading(false);
         }
@@ -23,7 +20,7 @@ const MoodLogStreak = () => {
         try {
             setLoading(true);
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const response = await axios.get(`${backendURL}/api/moodlog/streak/${userId}?timezone=${timezone}`);
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog/streak/${userId}?timezone=${timezone}`);
             console.log('Fetched streak data:', response.data);
             setStreakData(response.data);
         } catch (error) {
@@ -35,17 +32,13 @@ const MoodLogStreak = () => {
     };
 
     const generateDefaultStreakData = () => {
-        const today = new Date();
-        const todayInIST = new Date(today.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-        
         const weekDays = [];
         for (let i = 5; i >= -1; i--) {
-            const day = new Date(todayInIST);
-            day.setDate(todayInIST.getDate() - i);
+            const day = new Date();
+            day.setDate(day.getDate() - i);
             const formattedDate = day.toISOString().split('T')[0];
             weekDays.push({ date: formattedDate, count: 0 });
         }
-        
         return weekDays;
     };
 
@@ -57,28 +50,24 @@ const MoodLogStreak = () => {
     };
 
     const renderWeek = () => {
-        const today = new Date();
-        const todayInIST = new Date(today.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-        
         const weekDays = [];
         for (let i = 5; i >= -1; i--) {
-            const day = new Date(todayInIST);
-            day.setDate(todayInIST.getDate() - i);
-            const formattedDate = day.toISOString().split('T')[0];
-            weekDays.push(formattedDate);
+            const day = new Date();
+            day.setDate(day.getDate() - i);
+            weekDays.push(day);
         }
         
-        return weekDays.map((date) => {
-            const dayData = streakData.find(d => d.date === date);
+        return weekDays.map((day) => {
+            const formattedDate = day.toISOString().split('T')[0];
+            const dayData = streakData.find(d => d.date === formattedDate);
             const count = dayData ? dayData.count : 0;
-
             return (
-                <div key={date} className="flex flex-col items-center">
+                <div key={formattedDate} className="flex flex-col items-center">
                     <div 
                         className="w-8 h-8 rounded-md mb-1 border"
                         style={{ backgroundColor: getColor(count) }}
                     ></div>
-                    <span className="text-xs">{new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                    <span className="text-xs">{day.toLocaleDateString('en-US', { weekday: 'short' })}</span>
                 </div>
             );
         });

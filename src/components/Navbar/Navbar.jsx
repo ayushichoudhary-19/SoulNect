@@ -12,13 +12,14 @@ const Navbar = () => {
     logout();
     toast.success('Logged out successfully!', {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
       theme: "light",
+      onClose: () => window.location.reload()
     });
   };
 

@@ -3,8 +3,6 @@ import axios from "axios";
 import Chart from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 
-const backendURL = "http://localhost:3000";
-
 const MoodDashboard = () => {
   const [moodData, setMoodData] = useState([]);
   const [userFound, setUserFound] = useState(true);
@@ -27,7 +25,7 @@ const MoodDashboard = () => {
 
   const fetchMoodData = async (userId) => {
     try {
-      const response = await axios.get(`${backendURL}/api/moodlog/${userId}`);
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog/${userId}`);
       setMoodData(response.data);
     } catch (error) {
       console.error("Error fetching mood data:", error);

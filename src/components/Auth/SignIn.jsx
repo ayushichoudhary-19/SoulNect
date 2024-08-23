@@ -13,7 +13,7 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = showForm ? 'http://localhost:3000/api/signin' : 'http://localhost:3000/api/signup';
+    const endpoint = showForm ? `${import.meta.env.VITE_BACKEND_URL}/api/signin` : `${import.meta.env.VITE_BACKEND_URL}/api/signup`;
     try {
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -25,9 +25,9 @@ const SignIn = () => {
   
       const data = await res.json();
       if (res.ok) {
-        // Save userId in localStorage for both sign-in and sign-up
         login(data.userId);
         navigate('/');
+        window.location.reload(); 
       } else {
         setError(data.message);
       }

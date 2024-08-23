@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
@@ -6,19 +6,19 @@ import MoodLogStreak from './MoodLogStreak';
 import MoodDashboard from '../MoodDashboard/moodDashboard';
 import { useUser } from '../../store/userContext';
 
-const backendURL = 'http://localhost:3000';
-
 const MoodLog = () => {
   const { user, login, logout } = useUser();
   const userId = user?.userId;
   const [selectedMood, setSelectedMood] = useState(null);
   const [lastSavedTime, setLastSavedTime] = useState(null);
   const [timeLeft, setTimeLeft] = useState(null);
+  const [streakData, setStreakData] = useState([]);
   const [popupOpen, setPopupOpen] = useState(false);
 
   useEffect(() => {
     if (userId) {
       fetchLastMood();
+      fetchStreakData(userId);  // Fetch streak data when the component mounts
     }
   }, [userId]);
 
@@ -50,7 +50,7 @@ const MoodLog = () => {
     }
 
     try {
-      const response = await axios.get(`${backendURL}/api/moodlog/latest/${userId}`);
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog/latest/${userId}`);
       const latestLog = response.data;
       console.log('Fetched mood log:', latestLog);
 
@@ -65,6 +65,17 @@ const MoodLog = () => {
       console.error('Error fetching mood logs', error);
       setSelectedMood(null);
       setLastSavedTime(null);
+    }
+  };
+
+  const fetchStreakData = async (userId) => {
+    try {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog/streak/${userId}?timezone=${timezone}`);
+      console.log('Fetched streak data:', response.data);
+      setStreakData(response.data);
+    } catch (error) {
+      console.error('Error fetching streak data:', error);
     }
   };
 
@@ -88,7 +99,7 @@ const MoodLog = () => {
 
     if (!lastSavedTime || (now - lastSavedTime) / (1000 * 60 * 60) >= 8) {
       try {
-        await axios.post(`${backendURL}/api/moodlog`, { userId, mood });
+        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog`, { userId, mood });
         setSelectedMood(mood);
         setLastSavedTime(now);
         toast.success(`Mood "${mood}" saved successfully!`, {
@@ -102,6 +113,7 @@ const MoodLog = () => {
           theme: "light",
         });
         fetchLastMood();
+        fetchStreakData(userId);  // Re-fetch streak data after logging a mood
       } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to save mood. Please try again.', {
           position: "top-right",
@@ -132,7 +144,7 @@ const MoodLog = () => {
     <>
       <div className="flex flex-col gap-4 md:flex-row justify-around w-full items-center my-4 p-4 rounded-lg">
         <div className='flex gap-5 items-center flex-col md:flex-row'>
-          <MoodLogStreak userId={userId} />
+          <MoodLogStreak streakData={streakData} />
           <button 
             onClick={() => {setPopupOpen(true)}}
             className='bg-vibrant-yellow rounded p-4 hover:opacity-80 transition duration-300'>Mood Dashboard
@@ -204,15 +216,12 @@ const MoodLog = () => {
                 Mood Dashboard
               </h3>
               <button 
-                onClick={() => {setPopupOpen(false)}}
-                className="text-2xl font-bold"
-              >
-                &times;
+                onClick={() => setPopupOpen(false)} 
+                className="text-gray-500 hover:text-gray-700">
+                Close
               </button>
             </div>
-            <div className="p-4">
-              <MoodDashboard />
-            </div>
+            <MoodDashboard />
           </div>
         </div>
       )}
@@ -220,15 +229,21 @@ const MoodLog = () => {
   );
 };
 
-function getMoodColor(mood) {
-  const colors = {
-    'very happy': 'yellow-400',
-    happy: 'orange-400',
-    neutral: 'gray-400',
-    sad: 'blue-400',
-    'very sad': 'blue-800',
-  };
-  return colors[mood] || 'gray';
-}
+const getMoodColor = (mood) => {
+  switch (mood) {
+    case 'very happy':
+      return 'text-green-500';
+    case 'happy':
+      return 'text-yellow-500';
+    case 'neutral':
+      return 'text-gray-500';
+    case 'sad':
+      return 'text-blue-500';
+    case 'very sad':
+      return 'text-red-500';
+    default:
+      return 'text-gray-500';
+  }
+};
 
 export default MoodLog;

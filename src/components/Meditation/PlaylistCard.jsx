@@ -12,7 +12,7 @@ const PlaylistCard = ({ id }) => {
     const fetchPlaylist = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/spotify/playlist/${id}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/spotify/playlist/${id}`
         );
         setPlaylistData(response.data);
       } catch (error) {

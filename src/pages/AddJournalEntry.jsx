@@ -9,6 +9,9 @@ function AddJournalEntry() {
     <>
       <Streak />
       <JournalEntryMessage  />
+      <p className="m-0 text-sm flex items-center justify-center">
+        You can only make one entry per day, but you can keep updating it throughout the day
+      </p>
       <div className="flex flex-col md:flex-row md:justify-between mb-10">
         <div className="md:w-6/10 lg:w-6/10 px-10">
           <JournalForm />

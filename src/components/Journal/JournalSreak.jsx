@@ -8,12 +8,11 @@ const Streak = () => {
   const [streakEnd, setStreakEnd] = useState('');
 
   const userId = localStorage.getItem('userId');
-  const backendURL = 'http://localhost:3000';
 
   useEffect(() => {
     const fetchEntries = async () => {
       try {
-        const response = await axios.get(`${backendURL}/api/journal/${userId}`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/journal/${userId}`);
         const sortedEntries = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
         setEntries(sortedEntries);
         calculateStreak(sortedEntries);

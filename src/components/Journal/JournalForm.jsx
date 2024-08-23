@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
-import TinyMCEEditor from "./TinyMceEditor";
+import React, { useState, useEffect } from 'react';
+import TinyMCEEditor from './TinyMceEditor';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useLocation } from 'react-router-dom';
 
 function JournalForm() {
-    
     const [journalEntry, setJournalEntry] = useState("");
     const [isEditing, setIsEditing] = useState(false);
     const [currDate, setCurrDate] = useState(new Date());
     const [userId, setUserId] = useState(localStorage.getItem('userId'));
-
-    const backendURL = 'http://localhost:3000';
+    
+    const location = useLocation();
+    const entryContentFromState = location.state?.entryContent || "";
 
     // Function to format date
     const formatDate = (date) => {
@@ -24,36 +25,41 @@ function JournalForm() {
     };
 
     useEffect(() => {
-        const fetchEntry = async () => {
-            try {
-                const response = await axios.get(`${backendURL}/api/journal/${userId}/${getTodayKey()}`);
-                setJournalEntry(response.data.content || "");
-                setIsEditing(false);
-            } catch (error) {
-                setJournalEntry("");
-                setIsEditing(true);
-            }
-        };
+        if (entryContentFromState) {
+            setJournalEntry(entryContentFromState);
+            setIsEditing(true);
+        } else {
+            const fetchEntry = async () => {
+                try {
+                    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/journal/${userId}/${getTodayKey()}`);
+                    setJournalEntry(response.data.content || "");
+                    setIsEditing(false);
+                } catch (error) {
+                    setJournalEntry("");
+                    setIsEditing(true);
+                }
+            };
 
-        fetchEntry();
+            fetchEntry();
 
-        const interval = setInterval(() => {
-            const newDate = new Date();
-            if (newDate.getDate() !== currDate.getDate()) {
-                setCurrDate(newDate);
-                setJournalEntry("");
-                setIsEditing(true);
-            }
-        }, 60000);
+            const interval = setInterval(() => {
+                const newDate = new Date();
+                if (newDate.getDate() !== currDate.getDate()) {
+                    setCurrDate(newDate);
+                    setJournalEntry("");
+                    setIsEditing(true);
+                }
+            }, 60000);
 
-        return () => clearInterval(interval);
-    }, [currDate, userId]);
+            return () => clearInterval(interval);
+        }
+    }, [currDate, userId, entryContentFromState]);
 
     const handleSave = async () => {
         if (!userId) {
             toast.error('Please log in to save your journal entry.', {
                 position: "top-right",
-                autoClose: 2000,
+                autoClose: 1000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -65,7 +71,7 @@ function JournalForm() {
         }
         if (journalEntry.trim() !== "") {
             try {
-                await axios.post(`${backendURL}/api/journal`, {
+                await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/journal`, {
                     userId,
                     date: getTodayKey(),
                     content: journalEntry,
@@ -74,7 +80,7 @@ function JournalForm() {
                 setIsEditing(false);
                 toast.success('Journal entry saved successfully!', {
                     position: "top-right",
-                    autoClose: 2000,
+                    autoClose: 1000,
                     hideProgressBar: false,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -82,16 +88,16 @@ function JournalForm() {
                     progress: undefined,
                     theme: "light",
                 });
-    
+
                 // Refresh the window after a short delay to show the toast notification
                 setTimeout(() => {
                     window.location.reload();
-                }, 2100); // 2100 ms to ensure the toast displays before refreshing
-    
+                }, 1100); // 1000 ms to ensure the toast displays before refreshing
+
             } catch (error) {
                 toast.error('Failed to save entry. Please try again.', {
                     position: "top-right",
-                    autoClose: 2000,
+                    autoClose: 1000,
                     hideProgressBar: false,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -102,7 +108,6 @@ function JournalForm() {
             }
         }
     };
-    
 
     const handleEdit = () => {
         setIsEditing(true);
@@ -114,8 +119,8 @@ function JournalForm() {
             <div className="grid grid-cols-2 mt-10 mb-5">
                 <p className="text-md text-gray-400">{formatDate(currDate)}</p>
             </div>
-            
-            <TinyMCEEditor 
+
+            <TinyMCEEditor
                 value={journalEntry}
                 onEditorChange={(content) => setJournalEntry(content)}
                 disabled={!isEditing}
@@ -123,14 +128,14 @@ function JournalForm() {
 
             <div className="mt-5 text-right">
                 {isEditing ? (
-                    <button 
+                    <button
                         onClick={handleSave}
                         className="bg-[#E7F5E9] text-black rounded-md p-2 w-1/4 hover:opacity-80"
                     >
                         Save Entry
                     </button>
                 ) : (
-                    <button 
+                    <button
                         onClick={handleEdit}
                         className="bg-blue-500 text-white rounded-md p-2 w-1/4 hover:opacity-80"
                     >
