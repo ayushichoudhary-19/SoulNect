@@ -25,6 +25,7 @@ const SignIn = () => {
   
       const data = await res.json();
       if (res.ok) {
+        localStorage.setItem('userId', data.userId);
         login(data.userId);
         navigate('/');
         window.location.reload(); 
@@ -36,7 +37,6 @@ const SignIn = () => {
       console.error(err);
     }
   };
-  
 
   const toggleForm = () => {
     setShowForm(!showForm);
