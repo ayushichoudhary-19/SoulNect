@@ -3,7 +3,7 @@
 SoulNect is a soulful mental health web application that embraces the power of connection for holistic well-being. It focuses on fostering a deep connection with oneself, others, and the world to nurture the soul and promote emotional resilience.
 
 ## 🎥 Video Demonstration
-
+[![Screenshot](https://github.com/user-attachments/assets/9a868249-1e0d-4648-aceb-d66eb7bf340b)](https://www.youtube.com/watch?v=MmrNqAWhM2g&feature=youtu.be)
 
 ## 🔗 Repository Links
 
