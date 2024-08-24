@@ -13,7 +13,7 @@ function AddJournalEntry() {
         You can only make one entry per day, but you can keep updating it throughout the day
       </p>
       <div className="flex flex-col md:flex-row md:justify-between mb-10">
-        <div className="md:w-6/10 lg:w-6/10 px-10">
+        <div className="md:w-6/10 lg:w-6/10 px-10 mb-10 md:m-0">
           <JournalForm />
         </div>
         <div className=" bg-[#E7F5E9] rounded-lg p-4 md:w-4/10 lg:w-4/10 mb-4 md:mb-0">

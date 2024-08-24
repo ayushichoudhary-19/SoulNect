@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useUser } from '../../store/userContext';
@@ -7,6 +7,8 @@ import { useUser } from '../../store/userContext';
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout } = useUser();
+  const location = useLocation();
+  const navRef = useRef(null);
 
   const handleSignOut = () => {
     logout();
@@ -26,6 +28,27 @@ const Navbar = () => {
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navRef.current && !navRef.current.contains(event.target)) {
+        closeMobileMenu();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    closeMobileMenu();
+  }, [location]);
 
   return (
     <header className='sticky top-0 z-50'>
@@ -151,21 +174,23 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden px-4 pt-2 pb-3 space-y-1">
-            <NavLink
-              className={() =>
-                `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
-              }
-              to='/'
-            >
-              Home
-            </NavLink>
+        <div className="lg:hidden px-4 pt-2 pb-3 space-y-1">
+          <NavLink
+            className={() =>
+              `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
+            }
+            to='/'
+            onClick={closeMobileMenu}
+          >
+            Home
+          </NavLink>
 
             <NavLink
               className={() =>
                 `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
               }
               to="moodlog"
+              onClick={closeMobileMenu}
             >
               Mood Log
             </NavLink>
@@ -175,6 +200,7 @@ const Navbar = () => {
                 `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
               }
               to="myjournal"
+              onClick={closeMobileMenu}
             >
               My Journal
             </NavLink>
@@ -184,6 +210,7 @@ const Navbar = () => {
                 `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
               }
               to="meditation"
+              onClick={closeMobileMenu}
             >
               Meditation
             </NavLink>
@@ -192,6 +219,7 @@ const Navbar = () => {
               className={() =>
                 `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
               }
+              onClick={closeMobileMenu}
             >
               Resources
             </NavLink>
@@ -200,26 +228,31 @@ const Navbar = () => {
               className={() =>
                 `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
               }
+              onClick={closeMobileMenu}
             >
               Community
             </NavLink>
             {user ? (
-              <button
-                onClick={handleSignOut}
-                className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
-              >
-                Logout
-              </button>
-            ) : (
-              <Link
-                to="signin"
-                className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
-              >
-                Login
-              </Link>
-            )}
-          </div>
-        )}
+            <button
+              onClick={() => {
+                handleSignOut();
+                closeMobileMenu();
+              }}
+              className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              to="signin"
+              onClick={closeMobileMenu}
+              className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
+            >
+              Login
+            </Link>
+          )}
+        </div>
+      )}
       </nav>
       <ToastContainer />
     </header>
