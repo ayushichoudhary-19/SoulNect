@@ -3,10 +3,10 @@ import MeditationWelcomeMessage from "../components/Meditation/MeditationWelcome
 const MeditationPage = () => {
 
     return (
-        <>
+        <div className="min-h-70vh">
         <MeditationWelcomeMessage/>
         <Meditation/>
-        </>
+        </div>
     );
 };
 

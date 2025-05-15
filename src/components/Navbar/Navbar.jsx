@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -51,7 +51,7 @@ const Navbar = () => {
   }, [location]);
 
   return (
-    <header className='sticky top-0 z-50'>
+    <header className='sticky top-0 z-50 shadow-md shadow-soft-pink '>
       <nav className='bg-white px-4 lg:px-6 py-2.5'>
         <div className='flex flex-wrap justify-between items-center w-full lg:px-10 md:px-10'>
           <Link to="/" className="flex items-center">
@@ -92,9 +92,13 @@ const Navbar = () => {
             <li className='flex items-center'>
                 <NavLink
                   className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
+                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
+                    ${location.pathname.split().pop() === "/" ? "text-soft-pink": ""}
+                    }
+                    `
                   }
                   to='/'
+                  
                 >
                   Home
                 </NavLink>
@@ -102,7 +106,9 @@ const Navbar = () => {
               <li className='flex items-center'>
                 <NavLink
                   className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
+                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
+                     ${location.pathname.split().pop() === "/moodlog" ? "text-soft-pink": ""}
+                    `
                   }
                   to="moodlog"
                 >
@@ -112,7 +118,9 @@ const Navbar = () => {
               <li className='flex items-center'>
                 <NavLink
                   className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
+                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
+                       ${location.pathname.split().pop() === "/myjournal" ? "text-soft-pink": ""}
+                    `
                   }
                   to="myjournal"
                 >
@@ -122,7 +130,9 @@ const Navbar = () => {
               <li className='flex items-center'>
                 <NavLink
                   className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
+                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
+                     ${location.pathname.split().pop() === "/meditation" ? "text-soft-pink": ""}
+                    `
                   }
                   to="meditation"
                 >
@@ -132,7 +142,9 @@ const Navbar = () => {
               <li className='flex items-center'>
                 <NavLink
                   className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
+                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
+                     ${location.pathname.split().pop() === "/resources" ? "text-soft-pink": ""}
+                    `
                   }
                   to={`/resources`}
                 >
@@ -142,7 +154,9 @@ const Navbar = () => {
               <li className='flex items-center'>
                 <NavLink
                   className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
+                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
+                      ${location.pathname.split().pop() === "/community" ? "text-soft-pink": ""}
+                    `
                   }
                   to={`/community`}
                 >

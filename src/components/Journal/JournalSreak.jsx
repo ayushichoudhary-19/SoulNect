@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Streak = () => {
@@ -65,15 +66,15 @@ const Streak = () => {
   };
 
   return (
-    <div className='flex items-center justify-center '>
-      <div className="flex flex-col items-center justify-center w-[300px] px-7 py-4 rounded-full shadow-lg bg-white">
-        <h2 className="text-md text-gray-400">Current Streak</h2>
-        <div className='flex items-center justify-center gap-2 w-full'>
-          <p className="text-lg font-bold">{streak} day{streak > 1 ? 's' : ''}</p>
-          <img src="assets/images/journal/fire.png" alt="fire" className="w-5 h-5" />
+    <div className="flex items-center justify-center py-4">
+      <div className="flex flex-col items-center justify-center w-auto sm:w-64 px-5 py-3 rounded-full shadow-md bg-white transition-all hover:shadow-lg">
+        <h2 className="text-xs sm:text-sm text-gray-400 font-medium">Current Streak</h2>
+        <div className="flex items-center justify-center gap-2">
+          <p className="text-base sm:text-lg font-bold text-gray-800">{streak} day{streak !== 1 ? 's' : ''}</p>
+          <img src="assets/images/journal/fire.png" alt="fire" className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
         {streak > 0 && (
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-xs text-gray-500 mt-1">
             {streakEnd} - {streakStart}
           </p>
         )}

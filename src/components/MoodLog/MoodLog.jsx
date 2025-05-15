@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
@@ -17,8 +17,9 @@ const moodImages = {
   "very sad":
     "https://cdn.shopify.com/s/files/1/1061/1924/files/Crying_Face_Emoji.png?9898922749706957214",
 };
+
 const MoodLog = () => {
-  const { user, login, logout } = useUser();
+  const { user } = useUser();
   const userId = user?.userId;
   const [selectedMood, setSelectedMood] = useState(null);
   const [lastSavedTime, setLastSavedTime] = useState(null);
@@ -29,7 +30,7 @@ const MoodLog = () => {
   useEffect(() => {
     if (userId) {
       fetchLastMood();
-      fetchStreakData(userId); // Fetch streak data when the component mounts
+      fetchStreakData(userId);
     }
   }, [userId]);
 
@@ -170,112 +171,112 @@ const MoodLog = () => {
   };
 
   return (
-    <>
-      <div className="flex flex-col gap-4 md:flex-row justify-around w-full items-center my-4 p-4 rounded-lg">
-        <div className="flex gap-5 items-center flex-col md:flex-row">
-          <MoodLogStreak streakData={streakData} />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    {/* Section 1: Streak and Mood Status */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="bg-white rounded-2xl p-6 flex flex-col justify-center items-center gap-6">
+        <MoodLogStreak streakData={streakData} />
+        <button
+          onClick={() => setPopupOpen(true)}
+          className="bg-white w-fit text-gray-800 font-semibold py-3 px-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out flex items-center justify-center space-x-2"
+        >
+          <span>View Mood Dashboard</span>
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+  
+      <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center justify-center gap-4">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-800">
+            {selectedMood ? selectedMood.charAt(0).toUpperCase() + selectedMood.slice(1) : "No mood logged"}
+          </h2>
+          <p className="text-gray-500 mt-1">{selectedMood ? "Current Mood" : ""}</p>
+        </div>
+  
+        {timeLeft && (
+          <div className="text-center">
+            <p className="text-4xl font-bold text-vibrant-purple">{timeLeft}</p>
+            <p className="text-sm text-gray-500">Until next mood entry</p>
+          </div>
+        )}
+      </div>
+    </div>
+  
+    {/* Section 2: Mood Image + Select Mood */}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="lg:col-span-7">
+        <img
+          src="assets/images/Mood-Tracker-img.jpg"
+          className="w-full h-full object-cover rounded-2xl"
+          alt="Mood Tracker"
+        />
+      </div>
+  
+      <div className="lg:col-span-5 space-y-4">
+        <h3 className="text-2xl font-semibold text-gray-800 mb-2">Select Your Mood</h3>
+        {["very happy", "happy", "neutral", "sad", "very sad"].map((mood) => (
           <button
-            onClick={() => {
-              setPopupOpen(true);
-            }}
-            className="bg-vibrant-yellow rounded p-4 hover:opacity-80 transition duration-300"
+            key={mood}
+            onClick={() => handleClick(mood)}
+            className={`w-full p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition duration-300 ease-in-out ${getMoodColor(
+              mood
+            )} flex items-center space-x-4 group`}
           >
-            Mood Dashboard
+            <div className="w-12 h-12 flex-shrink-0 group-hover:scale-110 transition duration-300">
+              <img
+                src={moodImages[mood]}
+                className="w-full h-full object-contain"
+                alt={mood}
+              />
+            </div>
+            <span className="text-lg font-medium text-gray-700 capitalize">{mood}</span>
           </button>
-        </div>
-        <div className="flex gap-5 shadow-md bg-vibrant-yellow p-4 rounded items-center justify-center">
-          {/* Current Mood */}
-          <div className="flex flex-col justify-center items-center">
-            <p className="text-2xl font-bold mb-2">
-              {selectedMood
-                ? selectedMood.charAt(0).toUpperCase() + selectedMood.slice(1)
-                : "No mood logged yet"}
-            </p>
-            <p className="text-sm">{selectedMood ? "Current Mood" : ""}</p>
+        ))}
+      </div>
+    </div>
+  
+    <ToastContainer />
+  
+    {/* Dashboard Modal */}
+    {popupOpen && (
+      <div className="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-6 max-w-4xl w-full max-h-[85vh] overflow-y-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-bold text-gray-800">Mood Dashboard</h3>
+            <button
+              onClick={() => setPopupOpen(false)}
+              className="text-gray-500 hover:text-gray-700 transition duration-300"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          {timeLeft && (
-            <div className="flex flex-col justify-center items-center">
-              <p className="text-4xl font-bold">{timeLeft}</p>
-              <p className="text-md">Time until next mood entry</p>
-            </div>
-          )}
-          {!timeLeft && (
-            <div className="flex flex-col justify-center items-center">
-              <p className="text-4xl font-bold mb-2">00:00:00</p>
-              <p className="text-lg">Time until next mood entry</p>
-            </div>
-          )}
+          <MoodDashboard />
         </div>
       </div>
-      <div className="overflow-x-hidden">
-        <ul className="sm:grid sm:grid-cols-12 gap-2">
-          <li className="col-span-7 flex flex-col align-center">
-            <img
-              src="assets/images/Mood-Tracker-img.jpg"
-              className="pd-4 w-full"
-              alt="Mood Tracker"
-            />
-          </li>
-          <li className="pt-0 col-span-5 flex flex-col">
-            {["very happy", "happy", "neutral", "sad", "very sad"].map(
-              (mood) => (
-                <button
-                  key={mood}
-                  onClick={() => handleClick(mood)}
-                  className={`m-3 p-2 bg-white shadow-lg ${getMoodColor(
-                    mood
-                  )} rounded-md flex items-center transition duration-300 ease-in-out`}
-                >
-                  <img
-                    src={moodImages[mood]}
-                    className="w-1/6 z-1"
-                    alt={mood}
-                  />
-                  <span className="p-2 text-xl capitalize text-gray-500">
-                    {mood}
-                  </span>
-                </button>
-              )
-            )}
-          </li>
-        </ul>
-      </div>
-      <ToastContainer />
-      {popupOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto z-60">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Mood Dashboard</h3>
-              <button
-                onClick={() => setPopupOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                Close
-              </button>
-            </div>
-            <MoodDashboard />
-          </div>
-        </div>
-      )}
-    </>
+    )}
+  </div>
+  
   );
 };
 
 const getMoodColor = (mood) => {
-  console.log("Mood:", mood);
   switch (mood) {
     case "very happy":
-      return "hover:shadow-soft-green";
+      return "hover:bg-soft-green/10 border border-soft-green/20";
     case "happy":
-      return "hover:shadow-vibrant-yellow";
+      return "hover:bg-vibrant-yellow/10 border border-vibrant-yellow/20";
     case "neutral":
-      return "hover:shadow-vibrant-purple";
+      return "hover:bg-vibrant-purple/10 border border-vibrant-purple/20";
     case "sad":
-      return "hover:shadow-vibrant-cyan";
+      return "hover:bg-vibrant-cyan/10 border border-vibrant-cyan/20";
     case "very sad":
-      return "hover:shadow-vibrant-peach";
+      return "hover:bg-vibrant-peach/10 border border-vibrant-peach/20";
     default:
-      return "hover:shadow-gray-300";
+      return "hover:bg-gray-100 border border-gray-200";
   }
 };
 

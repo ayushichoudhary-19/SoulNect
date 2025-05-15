@@ -1,12 +1,20 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import Chart from "chart.js/auto";
-import "chartjs-adapter-date-fns";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
+import { format, parseISO } from "date-fns";
 
 const MoodDashboard = () => {
   const [moodData, setMoodData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [userFound, setUserFound] = useState(true);
-  const chartRef = useRef(null);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -17,136 +25,102 @@ const MoodDashboard = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (moodData.length > 0) {
-      createChart();
-    }
-  }, [moodData]);
-
   const fetchMoodData = async (userId) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog/${userId}`);
-      setMoodData(response.data);
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/moodlog/${userId}`
+      );
+
+      const formatted = response.data.map((log) => ({
+        date: parseISO(log.createdAt),
+        mood: getMoodValue(log.mood),
+      }));
+
+      setMoodData(formatted);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching mood data:", error);
+      setLoading(false);
     }
-  };
-
-  const createChart = () => {
-    const ctx = chartRef.current.getContext("2d");
-
-    if (chartRef.current.chart) {
-      chartRef.current.chart.destroy();
-    }
-
-    const dates = [];
-    const moodValues = [];
-
-    moodData.forEach((log) => {
-      const date = parseDate(log.createdAt);
-      if (date) {
-        dates.push(date);
-        moodValues.push(getMoodValue(log.mood));
-      }
-    });
-
-    const chart = new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: dates,
-        datasets: [
-          {
-            label: "Mood Over Time",
-            data: moodValues.map((value, index) => ({
-              x: dates[index],
-              y: value,
-            })),
-            borderColor: "rgb(245,232,96)",
-            tension: 0.1,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: {
-            type: "time",
-            time: {
-              unit: "day",
-              displayFormats: {
-                day: "MMM d",
-              },
-            },
-            title: {
-              display: true,
-              text: "Date",
-            },
-          },
-          y: {
-            beginAtZero: true,
-            max: 5,
-            ticks: {
-              stepSize: 1,
-              callback: function (value) {
-                return ["Very Sad", "Sad", "Neutral", "Happy", "Very Happy"][
-                  value - 1
-                ];
-              },
-            },
-            title: {
-              display: true,
-              text: "Mood",
-            },
-          },
-        },
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: function (context) {
-                const moodIndex = context.parsed.y - 1;
-                return ["Very Sad", "Sad", "Neutral", "Happy", "Very Happy"][
-                  moodIndex
-                ];
-              },
-            },
-          },
-        },
-      },
-    });
-
-    chartRef.current.chart = chart;
   };
 
   const getMoodValue = (mood) => {
     const moodValues = {
       "very sad": 1,
       sad: 2,
-      neutral: 2,
+      neutral: 3,
       happy: 4,
       "very happy": 5,
     };
     return moodValues[mood] || 3;
   };
 
-  const parseDate = (dateString) => {
-    const date = new Date(dateString);
-    return isNaN(date.getTime()) ? null : date;
+  const getMoodLabel = (value) => {
+    const labels = ["Very Sad", "Sad", "Neutral", "Happy", "Very Happy"];
+    return labels[value - 1] || "Unknown";
   };
 
-  return (
-    <div className="mood-dashboard">
-      {!userFound && <p>No user found. Please <span className="text-blue-500 hover:underline hover:cursor-pointer"
-        onClick={() => window.location.href = '/signin'} 
-      >login</span> to view this page.</p>}
-      {userFound && moodData.length === 0 && <p>No mood data found.</p>}
-      {userFound && moodData.length > 0 && (
-        <div
-          className="chart-container"
-          style={{ height: "400px", width: "100%" }}
-        >
-          <canvas ref={chartRef}></canvas>
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      const moodValue = payload[0].value;
+      return (
+        <div className="bg-white border px-3 py-2 rounded shadow text-sm">
+          <p><strong>{format(new Date(label), "MMM d, yyyy")}</strong></p>
+          <p>Mood: {getMoodLabel(moodValue)}</p>
         </div>
-      )}
+      );
+    }
+    return null;
+  };
+
+  if (!userFound) {
+    return (
+      <p>
+        No user found. Please{" "}
+        <span
+          className="text-blue-500 hover:underline cursor-pointer"
+          onClick={() => (window.location.href = "/signin")}
+        >
+          login
+        </span>{" "}
+        to view this page.
+      </p>
+    );
+  }
+
+  if (loading) {
+    return <div className="flex justify-center items-center">Loading...</div>;
+  }
+
+  if (moodData.length === 0) {
+    return <p>No mood data found.</p>;
+  }
+
+  return (
+    <div className="mood-dashboard w-full h-[400px] mt-4">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={moodData} margin={{ top: 20, right: 30, left: 0, bottom: 10 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="date"
+            tickFormatter={(str) => format(new Date(str), "MMM d")}
+            domain={["auto", "auto"]}
+          />
+          <YAxis
+            domain={[1, 5]}
+            tickFormatter={(value) => getMoodLabel(value)}
+            ticks={[1, 2, 3, 4, 5]}
+          />
+          <Tooltip content={<CustomTooltip />} />
+          <Line
+            type="monotone"
+            dataKey="mood"
+            stroke="#f5e860"
+            strokeWidth={2}
+            dot={{ r: 4 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 };

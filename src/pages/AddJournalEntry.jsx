@@ -1,4 +1,4 @@
-import React from "react";
+
 import JournalForm from "../components/Journal/JournalForm";
 import PreviousEntries from "../components/Journal/PreviousEntries";
 import Streak from "../components/Journal/JournalSreak";
@@ -6,21 +6,27 @@ import JournalEntryMessage from "../components/Journal/JournalEntryMessage";
 
 function AddJournalEntry() {
   return (
-    <>
+    <div className="container mx-auto px-4 py-6">
       <Streak />
-      <JournalEntryMessage  />
-      <p className="m-0 text-sm flex items-center justify-center">
+      
+      <div className="flex justify-center mb-3">
+        <JournalEntryMessage />
+      </div>
+      
+      <p className="text-xs sm:text-sm text-gray-600 text-center mb-6">
         You can only make one entry per day, but you can keep updating it throughout the day
       </p>
-      <div className="flex flex-col md:flex-row md:justify-between mb-10">
-        <div className="md:w-6/10 lg:w-6/10 px-10 mb-10 md:m-0">
+      
+      <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
+        <div className="w-full lg:w-3/5">
           <JournalForm />
         </div>
-        <div className=" bg-[#E7F5E9] rounded-lg p-4 md:w-4/10 lg:w-4/10 mb-4 md:mb-0">
+        
+        <div className="w-full lg:w-2/5 bg-green-50 rounded-xl shadow-sm p-4">
           <PreviousEntries />
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
