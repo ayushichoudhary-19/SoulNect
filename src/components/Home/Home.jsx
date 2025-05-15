@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import FeatureCard from "./FeatureCard";
-import { NavLink, Router } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 
 const featuresData = [
@@ -16,6 +16,12 @@ const featuresData = [
       title: "Journal",
       description: "Express yourself freely in a personal journal, with the ability to revisit and reflect on your thoughts and experiences over time.",
     },
+
+    {
+      icon: "assets/images/Home/community.png",
+      title: "Community",
+      description: "Engage in meaningful discussions with a supportive community, fostering connections and sharing experiences for a shared journey toward emotional resilience.",
+    },
     {
       icon: "assets/images/Home/meditate.png",
       link: "meditation",
@@ -26,11 +32,6 @@ const featuresData = [
       icon: "assets/images/Home/resources.png",
       title: "Resources",
       description: "Access a wealth of mental health resources, including free videos and blogs, designed to support your well-being and personal growth.",
-    },
-    {
-      icon: "assets/images/Home/community.png",
-      title: "Community",
-      description: "Engage in meaningful discussions with a supportive community, fostering connections and sharing experiences for a shared journey toward emotional resilience.",
     },
   ];
   
@@ -66,7 +67,8 @@ useEffect(() => {
             </aside>
         </div>
         <div className="w-full flex items-center justify-center">
-          <NavLink className="p-4 flex items-center justify-center gap-2 bg-soft-orange rounded hover:bg-soft-pink duration-75" to={ navigateToSignIn? "/signin" : "/moodlog"}>Let's Begin Healing 
+          <NavLink className="p-4 flex items-center justify-center gap-2 bg-soft-orange rounded hover:bg-soft-pink duration-75" to={ navigateToSignIn? "/signin" : "/moodlog"}>
+          {"Let's Begin Healing"}
           <img src="assets/images/Home/chevron.png" className="size-5"/></NavLink>
         </div>
         <div>

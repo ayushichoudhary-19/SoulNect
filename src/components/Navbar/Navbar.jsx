@@ -40,9 +40,9 @@ const Navbar = () => {
     { to: '/', label: 'Home' },
     { to: '/moodlog', label: 'Mood Log' },
     { to: '/myjournal', label: 'My Journal' },
+    { to: '/community', label: 'Community' },
     { to: '/meditation', label: 'Meditation' },
     { to: '/resources', label: 'Resources' },
-    { to: '/community', label: 'Community' },
   ];
 
   // const isActive = (path) => location.pathname === path;

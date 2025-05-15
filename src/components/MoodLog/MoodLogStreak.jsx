@@ -5,7 +5,6 @@ import { Tooltip } from 'react-tooltip';
 const MoodLogStreak = () => {
     const [streakData, setStreakData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
 
     useEffect(() => {
         const userId = localStorage.getItem('userId');
@@ -25,7 +24,6 @@ const MoodLogStreak = () => {
             console.log('Fetched streak data:', response.data);
             setStreakData(response.data);
         } catch (error) {
-            setError(true);
             console.error('Error fetching streak data:', error);
         } finally {
             setLoading(false);
