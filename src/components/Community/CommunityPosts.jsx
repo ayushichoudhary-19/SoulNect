@@ -36,7 +36,7 @@ export default function CommunityPosts() {
         </div>
         <button
           onClick={() => navigate('/community/new')}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          className="bg-primary flex hover:bg-primary/90 items-center justify-center text-primary-foreground"
         >
           <IconPlus className="mr-1 h-4 w-4" /> New Post
         </button>
@@ -59,9 +59,9 @@ export default function CommunityPosts() {
             <p className="text-gray-500 mb-6">Be the first to share your thoughts with the community.</p>
             <button
               onClick={() => navigate('/community/new')}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="bg-soft-pink hover:bg-soft-pink/90 rounded-md px-6 py-3"
             >
-              <IconPlus className="mr-1 h-4 w-4" /> Create Post
+              Create Post
             </button>
           </div>
         </div>

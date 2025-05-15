@@ -13,25 +13,14 @@ const Navbar = () => {
   const handleSignOut = () => {
     logout();
     toast.success('Logged out successfully!', {
-      position: "top-right",
       autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      onClose: () => window.location.reload()
+      theme: 'light',
+      onClose: () => window.location.reload(),
     });
   };
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-  };
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
+  const closeMobileMenu = () => setMobileMenuOpen(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -39,238 +28,127 @@ const Navbar = () => {
         closeMobileMenu();
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
     closeMobileMenu();
   }, [location]);
 
+  const navLinks = [
+    { to: '/', label: 'Home' },
+    { to: '/moodlog', label: 'Mood Log' },
+    { to: '/myjournal', label: 'My Journal' },
+    { to: '/meditation', label: 'Meditation' },
+    { to: '/resources', label: 'Resources' },
+    { to: '/community', label: 'Community' },
+  ];
+
+  // const isActive = (path) => location.pathname === path;
+
   return (
-    <header className='sticky top-0 z-50 shadow-md shadow-soft-pink '>
-      <nav className='bg-white px-4 lg:px-6 py-2.5'>
-        <div className='flex flex-wrap justify-between items-center w-full lg:px-10 md:px-10'>
+    <header className="sticky top-0 z-50 shadow-md shadow-[rgba(253,160,182,0.3)] backdrop-blur bg-white/90">
+      <nav className="px-4 lg:px-6 py-3" ref={navRef}>
+        <div className="flex flex-wrap justify-between items-center w-full lg:px-10">
           <Link to="/" className="flex items-center">
-            <img 
-              src="assets/images/SoulNect-Logo.png"
-              className="mr-3 h-12"
-              alt="Logo"
-            />
+            <img src="/assets/images/SoulNect-Logo.png" alt="Logo" className="h-12" />
           </Link>
 
-          {/* Hamburger Icon */}
+          {/* Hamburger */}
           <div className="lg:hidden">
-            <button
-              onClick={toggleMobileMenu}
-              className="text-black focus:outline-none"
-            >
-              <svg
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                className="w-6 h-6"
-              >
-                <path d="M4 6h16M4 12h16m-7 6h7"></path>
+            <button onClick={toggleMobileMenu} className="text-black focus:outline-none">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 6h16M4 12h16m-7 6h7" />
               </svg>
             </button>
           </div>
-        
-          {/* Desktop Menu */}
-          <div
-            className={`hidden lg:flex justify-between items-center w-full lg:w-auto lg:order-1 ${
-              mobileMenuOpen ? 'flex' : 'hidden'
-            }`}
-          >
-            <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
-            <li className='flex items-center'>
+
+          {/* Desktop Nav */}
+          <ul className="hidden lg:flex flex-row space-x-8 font-medium">
+            {navLinks.map(({ to, label }) => (
+              <li key={to}>
                 <NavLink
-                  className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
-                    ${location.pathname.split().pop() === "/" ? "text-soft-pink": ""}
-                    }
-                    `
+                  to={to}
+                  className={({ isActive }) =>
+                    `py-2 px-1 duration-200 ${
+                      isActive ? 'text-soft-pink' : 'text-gray-700 hover:text-soft-pink'
+                    }`
                   }
-                  to='/'
-                  
                 >
-                  Home
+                  {label}
                 </NavLink>
               </li>
-              <li className='flex items-center'>
-                <NavLink
-                  className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
-                     ${location.pathname.split().pop() === "/moodlog" ? "text-soft-pink": ""}
-                    `
-                  }
-                  to="moodlog"
-                >
-                  Mood Log
-                </NavLink>
-              </li>
-              <li className='flex items-center'>
-                <NavLink
-                  className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
-                       ${location.pathname.split().pop() === "/myjournal" ? "text-soft-pink": ""}
-                    `
-                  }
-                  to="myjournal"
-                >
-                  My Journal
-                </NavLink>
-              </li>
-              <li className='flex items-center'>
-                <NavLink
-                  className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
-                     ${location.pathname.split().pop() === "/meditation" ? "text-soft-pink": ""}
-                    `
-                  }
-                  to="meditation"
-                >
-                  Meditation
-                </NavLink>
-              </li>
-              <li className='flex items-center'>
-                <NavLink
-                  className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
-                     ${location.pathname.split().pop() === "/resources" ? "text-soft-pink": ""}
-                    `
-                  }
-                  to={`/resources`}
-                >
-                  Resources
-                </NavLink>
-              </li>
-              <li className='flex items-center'>
-                <NavLink
-                  className={() =>
-                    `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0
-                      ${location.pathname.split().pop() === "/community" ? "text-soft-pink": ""}
-                    `
-                  }
-                  to={`/community`}
-                >
-                  Community
-                </NavLink>
-              </li>
+            ))}
+            <li>
               {user ? (
-                <li className='flex items-center'>
-                  <button 
-                    onClick={handleSignOut}
-                    className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
-                  >
-                    Logout
-                  </button>
-                </li>
+                <button
+                  onClick={handleSignOut}
+                  className="bg-soft-pink text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
+                >
+                  Logout
+                </button>
               ) : (
-                <li className='flex items-center'>
-                  <Link
-                    to="signin"
-                    className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
-                  >
-                    Login
-                  </Link>
-                </li>
+                <Link
+                  to="/signin"
+                  className="bg-soft-pink text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
+                >
+                  Login
+                </Link>
               )}
-            </ul>
-          </div>
+            </li>
+          </ul>
         </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-        <div className="lg:hidden px-4 pt-2 pb-3 space-y-1">
-          <NavLink
-            className={() =>
-              `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
-            }
-            to='/'
-            onClick={closeMobileMenu}
-          >
-            Home
-          </NavLink>
-
-            <NavLink
-              className={() =>
-                `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
-              }
-              to="moodlog"
-              onClick={closeMobileMenu}
-            >
-              Mood Log
-            </NavLink>
-
-            <NavLink
-              className={() =>
-                `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
-              }
-              to="myjournal"
-              onClick={closeMobileMenu}
-            >
-              My Journal
-            </NavLink>
-
-            <NavLink
-              className={() =>
-                `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
-              }
-              to="meditation"
-              onClick={closeMobileMenu}
-            >
-              Meditation
-            </NavLink>
-
-            <NavLink
-              className={() =>
-                `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
-              }
-              onClick={closeMobileMenu}
-            >
-              Resources
-            </NavLink>
-
-            <NavLink
-              className={() =>
-                `block py-2 pr-4 pl-3 duration-200 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-soft-pink lg:p-0`
-              }
-              onClick={closeMobileMenu}
-            >
-              Community
-            </NavLink>
-            {user ? (
-            <button
-              onClick={() => {
-                handleSignOut();
-                closeMobileMenu();
-              }}
-              className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
-            >
-              Logout
-            </button>
-          ) : (
-            <Link
-              to="signin"
-              onClick={closeMobileMenu}
-              className='bg-soft-pink rounded text-black hover:bg-soft-orange duration-500 px-4 lg:px-5 py-2 lg:py-2 focus:outline-none'
-            >
-              Login
-            </Link>
-          )}
+        {/* Mobile Nav (animated dropdown) */}
+        <div
+          className={`lg:hidden transition-all duration-300 overflow-hidden ${
+            mobileMenuOpen ? 'max-h-[1000px] mt-4' : 'max-h-0'
+          }`}
+        >
+          <ul className="space-y-2 px-4 pb-4 text-sm font-medium">
+            {navLinks.map(({ to, label }) => (
+              <li key={to}>
+                <NavLink
+                  to={to}
+                  onClick={closeMobileMenu}
+                  className={({ isActive }) =>
+                    `block py-2 ${
+                      isActive ? 'text-soft-pink' : 'text-gray-700 hover:text-soft-pink'
+                    }`
+                  }
+                >
+                  {label}
+                </NavLink>
+              </li>
+            ))}
+            <li>
+              {user ? (
+                <button
+                  onClick={() => {
+                    handleSignOut();
+                    closeMobileMenu();
+                  }}
+                  className="bg-soft-pink w-full text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  to="/signin"
+                  onClick={closeMobileMenu}
+                  className="block bg-soft-pink text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
+                >
+                  Login
+                </Link>
+              )}
+            </li>
+          </ul>
         </div>
-      )}
       </nav>
       <ToastContainer />
     </header>
   );
-}
+};
 
 export default Navbar;
