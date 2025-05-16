@@ -1,13 +1,14 @@
 const JournalEntryMessage = () => {
 
     return (
-        <>
-         <div className="ml-10 mr-0 max-w-full mt-12 ">
-            <h1 className="text-4xl text-center sm:text-5xl xl:text-7xl 2xl:text-8xl">
-                Write a <span className='text-vibrant-green'>Journal</span>
-            </h1>
-        </div>
-        </>
+         <div
+        className="text-center mb-5"
+      >
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2 mt-5">Write a journal</h1>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+        Let your thoughts flow. One word at a time.
+        </p>
+      </div>
     );
 }
 export default JournalEntryMessage;

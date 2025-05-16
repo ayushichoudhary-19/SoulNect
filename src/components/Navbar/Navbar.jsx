@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-hot-toast';
 import { useUser } from '../../store/userContext';
 
 const Navbar = () => {
@@ -48,9 +47,9 @@ const Navbar = () => {
   // const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 shadow-md shadow-[rgba(253,160,182,0.3)] backdrop-blur bg-white/90">
-      <nav className="px-4 lg:px-6 py-3" ref={navRef}>
-        <div className="flex flex-wrap justify-between items-center w-full lg:px-10">
+    <header className="sticky top-0 z-50 shadow-md backdrop-blur bg-white/90">
+      <nav className="px-2 py-3 max-w-7xl mx-auto" ref={navRef}>
+        <div className="flex flex-wrap justify-between items-center w-full">
           <Link to="/" className="flex items-center">
             <img src="/assets/images/SoulNect-Logo.png" alt="Logo" className="h-12" />
           </Link>
@@ -65,14 +64,14 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Nav */}
-          <ul className="hidden lg:flex flex-row space-x-8 font-medium">
+          <ul className="hidden lg:flex flex-row items-center justify-center space-x-8 font-medium">
             {navLinks.map(({ to, label }) => (
               <li key={to}>
                 <NavLink
                   to={to}
                   className={({ isActive }) =>
                     `py-2 px-1 duration-200 ${
-                      isActive ? 'text-soft-pink' : 'text-gray-700 hover:text-soft-pink'
+                      isActive ? 'text-orange-500' : 'text-gray-700 hover:text-orange-500'
                     }`
                   }
                 >
@@ -84,14 +83,14 @@ const Navbar = () => {
               {user ? (
                 <button
                   onClick={handleSignOut}
-                  className="bg-soft-pink text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
+                  className="bg-orange-500 text-white hover:bg-orange-600 px-4 py-2 rounded duration-200"
                 >
                   Logout
                 </button>
               ) : (
                 <Link
                   to="/signin"
-                  className="bg-soft-pink text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
+                  className="bg-orange-500 text-white hover:bg-orange-600 px-4 py-2 rounded duration-100"
                 >
                   Login
                 </Link>
@@ -114,7 +113,7 @@ const Navbar = () => {
                   onClick={closeMobileMenu}
                   className={({ isActive }) =>
                     `block py-2 ${
-                      isActive ? 'text-soft-pink' : 'text-gray-700 hover:text-soft-pink'
+                      isActive ? 'text-orange-500' : 'text-gray-700 hover:text-orange-500'
                     }`
                   }
                 >
@@ -129,7 +128,7 @@ const Navbar = () => {
                     handleSignOut();
                     closeMobileMenu();
                   }}
-                  className="bg-soft-pink w-full text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
+                  className="bg-orange-500 w-full text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
                 >
                   Logout
                 </button>
@@ -137,7 +136,7 @@ const Navbar = () => {
                 <Link
                   to="/signin"
                   onClick={closeMobileMenu}
-                  className="block bg-soft-pink text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
+                  className="block bg-orange-500 text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
                 >
                   Login
                 </Link>
@@ -146,7 +145,6 @@ const Navbar = () => {
           </ul>
         </div>
       </nav>
-      <ToastContainer />
     </header>
   );
 };

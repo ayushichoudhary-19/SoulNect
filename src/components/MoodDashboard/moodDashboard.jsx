@@ -78,7 +78,7 @@ const MoodDashboard = () => {
       <p>
         No user found. Please{" "}
         <span
-          className="text-blue-500 hover:underline cursor-pointer"
+          className="text-purple-500 hover:underline cursor-pointer"
           onClick={() => (window.location.href = "/signin")}
         >
           login

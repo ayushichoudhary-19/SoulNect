@@ -1,5 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+body {
+  font-family: "Urbanist", sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #1f2937;
+}
 
-*{
-    font-family: 'Lato', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 500;
 }

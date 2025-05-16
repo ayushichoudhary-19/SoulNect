@@ -1,7 +1,7 @@
 import {useState, useEffect} from "react";
 import FeatureCard from "./FeatureCard";
 import { NavLink } from "react-router-dom";
-
+import { IconArrowRight } from "../icons/TablerIcons";
 
 const featuresData = [
     {
@@ -49,17 +49,17 @@ useEffect(() => {
 }, []);
     return (
         <>
-        <div className="mx-auto w-full max-w-7xl">
-            <aside className="flex flex-col overflow-hidden text-black rounded-lg sm:mx-16 xl:mx-0 sm:py-16">
-                <div className="hidden sm:block absolute pt-12 items-center justify-center">
-    <img className="w-3/5 sm:w-2/5 md:w-2/3 lg:w-3/4 xl:w-3/5" src="assets/images/SoulNect-Logo.png" loading="lazy"/>
-</div>
-                <div className="relative max-w-screen-xl px-4 pb-20 pt-10 sm:py-10 ml-100 sm:px-6 lg:px-8 flex-col sm:flex-row">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <aside className="flex flex-col overflow-hidden text-black rounded-lg sm:py-16">
+                <div className="hidden sm:block sm:absolute pt-12 items-center justify-center">
+                    <img className="w-3/5 sm:w-2/5 md:w-2/3 lg:w-3/4 xl:w-3/5" src="assets/images/SoulNect-Logo.png" loading="lazy"/>
+                </div>
+                <div className="relative max-w-screen-xl px-4 pb-20 pt-10 sm:py-10 sm:px-6 lg:px-8 flex-col sm:flex-row">
                     <div className="max-w-xl space-y-8 text-center sm:text-right sm:ml-auto sm:w-1/2">
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl">
                         What is SoulNect?
                     </h1>
-                        <p>Soulnect is a blend of <span className="text-soft-pink font-bold">soul </span> and <span className="text-soft-orange font-bold" >connect</span>, representing the idea of connecting with oneself and others on a deeper level for emotional well-being.
+                        <p>Soulnect is a blend of <span className="text-orange-500 font-bold">soul </span> and <span className="text-purple-600 font-bold" >connect</span>, representing the idea of connecting with oneself and others on a deeper level for emotional well-being.
                             It is a soulful mental health web application that embraces the power of connection for holistic well-being. It focuses on fostering a deep connection with oneself, others, and the world to nurture the soul and promote emotional resilience. Through its features and resources, the app aims to guide users on a transformative journey of self-discovery, self-care, and meaningful connections.
                         </p>
                     </div>
@@ -67,9 +67,10 @@ useEffect(() => {
             </aside>
         </div>
         <div className="w-full flex items-center justify-center">
-          <NavLink className="p-4 flex items-center justify-center gap-2 bg-soft-orange rounded hover:bg-soft-pink duration-75" to={ navigateToSignIn? "/signin" : "/moodlog"}>
+          <NavLink className="p-4 flex items-center justify-center gap-2 bg-purple-500 rounded hover:bg-orange-500 duration-75 text-white" to={ navigateToSignIn? "/signin" : "/moodlog"}>
           {"Let's Begin Healing"}
-          <img src="assets/images/Home/chevron.png" className="size-5"/></NavLink>
+         <IconArrowRight className="w-6 h-6" stroke={1.5}/>
+         </NavLink>
         </div>
         <div>
         <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-center my-12">

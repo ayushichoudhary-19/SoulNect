@@ -1,150 +1,195 @@
+"use client";
 
-import { useState, useEffect } from 'react';
-import TinyMCEEditor from './TinyMceEditor';
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import TinyMCEEditor from "./TinyMceEditor";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import confetti from "canvas-confetti";
 
 function JournalForm() {
-    const [journalEntry, setJournalEntry] = useState("");
-    const [isEditing, setIsEditing] = useState(false);
-    const [currDate, setCurrDate] = useState(new Date());
-    const userId = localStorage.getItem('userId');
-    
-    const location = useLocation();
-    const entryContentFromState = location.state?.entryContent || "";
-    const queryParams = new URLSearchParams(location.search);
-    const editId = queryParams.get('editId');
-    const navigate = useNavigate();
+  const [journalEntry, setJournalEntry] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [currDate, setCurrDate] = useState(new Date());
+  const [loading, setLoading] = useState(true);
+  const userId = localStorage.getItem("userId");
 
+  const location = useLocation();
+  const entryContentFromState = location.state?.entryContent || "";
+  const queryParams = new URLSearchParams(location.search);
+  const editId = queryParams.get("editId");
+  const navigate = useNavigate();
 
+  const formatDate = (date) => {
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
-    // Function to format date
-    const formatDate = (date) => {
-        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    };
+  useEffect(() => {
+    setLoading(true);
 
-    // Function to get today's date key
-    const getTodayKey = () => {
-        return formatDate(new Date());
-    };
+    if (editId) {
+      axios
+        .get(`${import.meta.env.VITE_BACKEND_URL}/api/journal/entry/${editId}`)
+        .then((res) => {
+          setJournalEntry(res.data.content);
+          setIsEditing(true);
+          setLoading(false);
+        })
+        .catch(() => {
+          toast.error("Failed to load entry");
+          setLoading(false);
+        });
+      return;
+    }
 
-    useEffect(() => {
-        if (editId) {
-            axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/journal/entry/${editId}`)
-                .then(res => {
-                    setJournalEntry(res.data.content);
-                    setIsEditing(true);
-                })
-                .catch(() => {
-                    toast.error('Failed to load entry');
-                });
-            return;
-        }
-    
-        if (entryContentFromState) {
-            setJournalEntry(entryContentFromState);
-            setIsEditing(true);
-            return;
-        }
-    
-        const fetchEntry = async () => {
-            try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/journal/${userId}/${getTodayKey()}`);
-                setJournalEntry(response.data.content || "");
-                setIsEditing(false);
-            } catch (error) {
-                setJournalEntry("");
-                setIsEditing(true);
-            }
-        };
-    
-        fetchEntry();
-    
-        const interval = setInterval(() => {
-            const newDate = new Date();
-            if (newDate.getDate() !== currDate.getDate()) {
-                setCurrDate(newDate);
-                setJournalEntry("");
-                setIsEditing(true);
-            }
-        }, 60000);
-    
-        return () => clearInterval(interval);
-    }, [currDate, userId, entryContentFromState, editId]);
-    
+    if (entryContentFromState) {
+      setJournalEntry(entryContentFromState);
+      setIsEditing(true);
+      setLoading(false);
+      return;
+    }
 
-    const handleSave = async () => {
-        if (!userId || journalEntry.trim() === "") {
-          toast.error('Please log in and write something first!');
-          return;
-        }
-      
-        try {
-          if (editId) {
-            await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/journal/${editId}`, { content: journalEntry });
-            toast.success('Entry updated!');
-          } else {
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/journal`, {
-              userId,
-              date: new Date().toISOString(),
-              content: journalEntry,
-            });
-            toast.success('New entry added!');
-          }
-      
-          setTimeout(() => {
-            navigate("/myjournal");
-          }, 1000);
-        } catch (error) {
-          toast.error('Error saving entry.');
-        }
-      };
-      
+    setIsEditing(true);
+    setLoading(false);
 
-    const handleEdit = () => {
+    const interval = setInterval(() => {
+      const newDate = new Date();
+      if (newDate.getDate() !== currDate.getDate()) {
+        setCurrDate(newDate);
+        setJournalEntry("");
         setIsEditing(true);
-    };
+      }
+    }, 60000);
 
+    return () => clearInterval(interval);
+  }, [currDate, userId, entryContentFromState, editId]);
+
+  const handleSave = async () => {
+    if (!userId || journalEntry.trim() === "") {
+      toast.error("Please log in and write something first!");
+      return;
+    }
+  
+    try {
+      let newEntryData;
+  
+      if (editId) {
+        await axios.put(
+          `${import.meta.env.VITE_BACKEND_URL}/api/journal/${editId}`,
+          { content: journalEntry }
+        );
+        toast.success("Entry updated!");
+      } else {
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/journal`, {
+          userId,
+          date: new Date().toISOString(),
+          content: journalEntry,
+        });
+  
+        newEntryData = response.data;
+  
+        confetti({ /* ... */ });
+        toast.success("New entry added!");
+  
+        // ✅ Clear the editor after save
+        setJournalEntry("");
+  
+        // Notify other components (like PreviousEntries)
+        const entryAddedEvent = new CustomEvent("journalEntryAdded", {
+          detail: { entry: newEntryData }
+        });
+        window.dispatchEvent(entryAddedEvent);
+      }
+  
+      setTimeout(() => {
+        navigate("/myjournal");
+      }, 1000);
+    } catch (error) {
+      toast.error("Error saving entry.");
+    }
+  };
+  
+  
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  if (loading) {
     return (
-        <div className="w-full max-w-4xl mx-auto">
-            {/* Display current date */}
-            <div className="flex justify-between items-center mb-4 mt-4 md:mt-6">
-                <p className="text-sm md:text-md text-gray-400 font-medium">{formatDate(currDate)}</p>
-            </div>
-
-            <div className="rounded-md overflow-hidden shadow-sm border border-gray-100">
-                <TinyMCEEditor
-                    value={journalEntry}
-                    onEditorChange={(content) => setJournalEntry(content)}
-                    disabled={!isEditing}
-                />
-            </div>
-
-            <div className="mt-4 flex justify-end">
-                {isEditing ? (
-                    <button
-                        onClick={handleSave}
-                        className="bg-green-50 text-green-700 font-medium rounded-md px-4 py-2 w-full sm:w-auto sm:min-w-[120px] hover:bg-green-100 transition-colors"
-                    >
-                        Save Entry
-                    </button>
-                ) : (
-                    <button
-                        onClick={handleEdit}
-                        className="bg-blue-500 text-white font-medium rounded-md px-4 py-2 w-full sm:w-auto sm:min-w-[120px] hover:bg-blue-600 transition-colors"
-                    >
-                        Edit Entry
-                    </button>
-                )}
-            </div>
-
-            {/* ToastContainer for displaying notifications */}
-            <ToastContainer />
-        </div>
+      <div className="w-full max-w-4xl mx-auto animate-pulse">
+        <div className="h-6 bg-gray-200 w-48 mb-4 rounded"></div>
+        <div className="h-64 bg-gray-200 rounded-md mb-4"></div>
+        <div className="h-10 bg-gray-200 w-32 ml-auto rounded"></div>
+      </div>
     );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="w-full max-w-4xl mx-auto"
+    >
+      <div className="flex justify-between items-center mb-4 mt-4 md:mt-6">
+        <motion.p
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-sm md:text-md text-gray-400 font-medium"
+        >
+          {formatDate(currDate)}
+        </motion.p>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.4 }}
+        className="rounded-lg overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300"
+      >
+        <TinyMCEEditor
+          value={journalEntry}
+          onEditorChange={(content) => setJournalEntry(content)}
+          disabled={!isEditing}
+        />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.4 }}
+        className="mt-4 flex justify-end"
+      >
+        {isEditing ? (
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleSave}
+            className="bg-purple-600 text-white font-medium rounded-lg px-6 py-2.5 w-full sm:w-auto sm:min-w-[120px] hover:bg-purple-700 transition-colors duration-300 shadow-sm"
+          >
+            Save Entry
+          </motion.button>
+        ) : (
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleEdit}
+            className="bg-purple-500 text-white font-medium rounded-lg px-6 py-2.5 w-full sm:w-auto sm:min-w-[120px] hover:bg-purple-700 transition-colors duration-300 shadow-sm"
+          >
+            Edit Entry
+          </motion.button>
+        )}
+      </motion.div>
+    </motion.div>
+  );
 }
 
 export default JournalForm;
