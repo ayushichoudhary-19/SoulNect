@@ -52,7 +52,14 @@ const MeditationCompletedPage = () => {
           transition={{ delay: 0.5 }}
           className="text-gray-600 mb-6"
         >
-          {"You've "} completed {duration} minutes of serenity with {theme}.
+          {"You've "} completed 
+          {" "}
+          {duration >= 1 ? duration
+          : duration * 60}
+          {duration >= 1? "minutes" :
+          " seconds"}
+          {" "}
+           of serenity with {theme}.
         </motion.p>
 
         <motion.div

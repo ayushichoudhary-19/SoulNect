@@ -6,10 +6,11 @@ export default function Layout() {
   const location = useLocation();
   const isLandingPage = location.pathname === "/";
   const isAuthPage = location.pathname === "/signin";
+  const isMeditationSession = location.pathname === "/meditation/session";
 
   return (
     <>
-      {!isLandingPage && !isAuthPage && <Navbar />}
+      {!isLandingPage && !isAuthPage && !isMeditationSession && <Navbar />}
       <Outlet />
       {isLandingPage && <Footer />}
     </>

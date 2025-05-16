@@ -2,20 +2,22 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useUser } from '../../store/userContext';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout } = useUser();
   const location = useLocation();
   const navRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleSignOut = () => {
     logout();
     toast.success('Logged out successfully!', {
       autoClose: 1000,
       theme: 'light',
-      onClose: () => window.location.reload(),
     });
+    navigate('/');
   };
 
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
@@ -126,7 +128,7 @@ const Navbar = () => {
                     handleSignOut();
                     closeMobileMenu();
                   }}
-                  className="bg-orange-500 w-full text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
+                  className="bg-orange-500 w-full text-white hover:bg-soft-orange px-4 py-2 rounded duration-300"
                 >
                   Logout
                 </button>
@@ -134,7 +136,7 @@ const Navbar = () => {
                 <Link
                   to="/signin"
                   onClick={closeMobileMenu}
-                  className="block bg-orange-500 text-black hover:bg-soft-orange px-4 py-2 rounded duration-300"
+                  className="block bg-orange-500 text-white hover:bg-soft-orange px-4 py-2 rounded duration-300"
                 >
                   Login
                 </Link>

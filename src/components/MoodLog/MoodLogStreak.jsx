@@ -102,7 +102,6 @@ const MoodLogStreak = () => {
     return (
       <div className="flex items-center justify-center p-4">
         <div className="animate-pulse flex flex-col items-center">
-          <div className="h-6 w-32 bg-gray-200 rounded mb-4"></div>
           <div className="flex gap-2">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="w-8 h-8 bg-gray-200 rounded-md"></div>
@@ -118,20 +117,9 @@ const MoodLogStreak = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="flex flex-col justify-center items-center px-7 py-4 rounded-lg shadow-sm transition duration-300 ease-in-out bg-white border border-gray-100"
+        className="flex flex-col justify-center items-center px-0 md:px-7 py-4 transition duration-300 ease-in-out bg-white"
       >
-        <div className="flex items-center justify-center gap-2 w-full mb-3">
-          <h3 className="text-xl font-bold text-gray-800">Weekly Streak</h3>
-          <motion.img
-            initial={{ rotate: -10 }}
-            animate={{ rotate: 10 }}
-            transition={{ repeat: Number.POSITIVE_INFINITY, repeatType: "reverse", duration: 1 }}
-            src="assets/images/journal/fire.png"
-            alt="fire"
-            className="w-5 h-5"
-          />
-        </div>
-        <div className="flex justify-between gap-3">{renderWeek()}</div>
+        <div className="flex justify-between gap-1 md:gap-3">{renderWeek()}</div>
       </motion.div>
     </div>
   )

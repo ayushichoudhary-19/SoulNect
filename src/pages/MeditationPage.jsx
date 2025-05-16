@@ -41,7 +41,11 @@ const MeditationPage = () => {
   }, [userId])
 
   const formatDuration = (minutes) => {
-    return `${minutes} min${minutes !== 1 ? "s" : ""}`
+    if (minutes < 1) {
+      const seconds = Math.round(minutes * 60);
+      return `${seconds} sec${seconds !== 1 ? "s" : ""}`;
+    }
+    return `${minutes} min${minutes !== 1 ? "s" : ""}`;
   }
 
   const formatDate = (timestamp) => {
@@ -53,9 +57,9 @@ const MeditationPage = () => {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="animate-pulse space-y-8">
-          <div className="h-10 bg-purple-200 rounded w-3/4 max-w-md"></div>
-          <div className="h-32 bg-purple-200 rounded-lg"></div>
-          <div className="h-64 bg-purple-200 rounded-lg"></div>
+          <div className="h-10 bg-gray-200 rounded w-3/4 max-w-md"></div>
+          <div className="h-32 bg-gray-200 rounded-lg"></div>
+          <div className="h-64 bg-gray-200 rounded-lg"></div>
         </div>
       </div>
     )

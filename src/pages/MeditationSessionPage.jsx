@@ -172,7 +172,8 @@ const MeditationSessionPage = () => {
   
 
   const toggleMute = () => {
-    setIsMuted(!isMuted)
+    if (!isActive) return;
+    setIsMuted(!isMuted);
   }
 
   const handleExit = () => {
@@ -285,12 +286,13 @@ const MeditationSessionPage = () => {
               className="flex flex-col items-center"
             >
               {/* Controls */}
-              <div className="absolute top-4 right-4 flex space-x-4">
+              <div className="fixed top-4 right-4 z-[100] flex space-x-4">
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={toggleMute}
-                  className="bg-white/20 backdrop-blur-sm p-3 rounded-full"
+                  disabled={!isActive}
+                  className={`bg-white/20 backdrop-blur-sm p-3 rounded-full ${!isActive ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {isMuted ? (
                     <IconVolumeOff size={24} className="text-white" />
@@ -309,29 +311,33 @@ const MeditationSessionPage = () => {
               </div>
 
               {/* Prompt */}
-              <AnimatePresence>
-                {showPrompt && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="mb-12 text-3xl md:text-4xl font-light"
-                  >
-                    {prompt}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <div className="h-16 mb-6 flex items-center justify-center">
+  <AnimatePresence>
+    {showPrompt && (
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="text-2xl md:text-3xl font-light text-center"
+      >
+        {prompt}
+      </motion.div>
+    )}
+  </AnimatePresence>
+</div>
+
 
               {/* Breathing Circle */}
-              <div className="relative flex flex-col items-center justify-center mb-12">
-                <motion.div
-                  animate={getBreathAnimation()}
-                  className="w-48 h-48 md:w-64 md:h-64 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center"
-                >
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white/30 backdrop-blur-md"></div>
-                </motion.div>
-                <div className="absolute text-2xl font-light">{getBreathText()}</div>
-              </div>
+              <div className="relative flex flex-col items-center justify-center mb-8 mt-4 md:mt-10">
+  <motion.div
+    animate={getBreathAnimation()}
+    className="w-40 h-40 md:w-64 md:h-64 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center"
+  >
+    <div className="w-24 h-24 md:w-40 md:h-40 rounded-full bg-white/30 backdrop-blur-md"></div>
+  </motion.div>
+  <div className="absolute text-xl md:text-2xl font-light">{getBreathText()}</div>
+</div>
+
 
               <div className="text-6xl md:text-7xl font-light mb-12">{formatTime(timeLeft)}</div>
 

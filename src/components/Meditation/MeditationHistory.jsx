@@ -114,7 +114,11 @@ const MeditationHistory = ({ limit, filters = {} }) => {
                 </div>
               </div>
               <div className="text-right">
-                <span className="font-medium text-gray-700">{session.duration} min</span>
+                <span className="font-medium text-gray-700">
+                  {session.duration < 1 
+                    ? `${Math.round(session.duration * 60)} sec` 
+                    : `${session.duration} min`}
+                </span>
                 {session.mood && (
                   <div className="flex items-center text-sm text-gray-500 mt-1 justify-end">
                     <IconMoodSmile size={16} className="mr-1" />

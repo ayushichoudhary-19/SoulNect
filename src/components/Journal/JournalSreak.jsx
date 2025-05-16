@@ -84,7 +84,7 @@ const JournalStreak = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-4">
-        <div className="animate-pulse w-64 h-16 bg-gray-200 rounded-full"></div>
+        <div className="animate-pulse w-32 h-32 bg-gray-200 rounded-full"></div>
       </div>
     )
   }

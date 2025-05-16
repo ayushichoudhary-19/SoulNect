@@ -40,7 +40,6 @@ const SignIn = () => {
         localStorage.setItem("name", name);
         login(data.userId);
         navigate("/home");
-        window.location.reload();
       } else {
         setError(data.message || "Authentication failed");
       }

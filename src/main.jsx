@@ -20,11 +20,16 @@ import PostPage from "./pages/PostPage.jsx";
 import JournalEntriesPage from "./pages/JournalEntriesPage.jsx";
 import { Toaster } from "react-hot-toast"
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
+import AuthGuard from "./components/Auth/AuthGuard.jsx";
 
 const navrouter = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <AuthGuard>
+        <Layout />
+      </AuthGuard>
+    ),
     children: [
       { path: "", element: <Home /> },
       { path: "home", element: <Home /> },
@@ -48,10 +53,10 @@ const navrouter = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ErrorBoundary>
-  <UserProvider>
-    <RouterProvider router={navrouter} />
-    <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
-  </UserProvider>
-  </ErrorBoundary>
+      <UserProvider>
+        <RouterProvider router={navrouter} />
+        <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+      </UserProvider>
+    </ErrorBoundary>
   </React.StrictMode>,
 );

@@ -3,8 +3,12 @@ export {
     IconArrowRight,
     IconArrowUp,
     IconSend,
+    IconPlayerPlay, 
+    IconVolume, 
+    IconClock,
     IconBrandGithub, 
-    IconBrandLinkedin, 
+    IconBrandLinkedin,
+    IconMoodHappy,
     IconMail,
     IconBook,
     IconLock,
@@ -23,9 +27,7 @@ export {
     IconCalendarStats,
     IconNotebook,
     IconHome,
-    IconPlayerPlay,
     IconPlayerPause,
-    IconVolume,
     IconVolumeOff,
   } from '@tabler/icons-react'
   
