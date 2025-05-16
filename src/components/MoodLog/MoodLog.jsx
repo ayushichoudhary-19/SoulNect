@@ -22,8 +22,6 @@ const MoodLog = () => {
   const { user } = useUser()
   const userId = user?.userId
   const [selectedMood, setSelectedMood] = useState(null)
-  const [lastSavedTime, setLastSavedTime] = useState(null)
-  const [timeLeft, setTimeLeft] = useState(null)
   const [streakData, setStreakData] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -36,55 +34,19 @@ const MoodLog = () => {
     }
   }, [userId])
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (lastSavedTime) {
-        const now = Date.now()
-        const diffInHours = (now - lastSavedTime) / (1000 * 60 * 60)
-        if (diffInHours < 8) {
-          const timeLeftInSeconds = Math.floor(8 * 60 * 60 - (now - lastSavedTime) / 1000)
-          const hours = Math.floor(timeLeftInSeconds / 3600)
-            .toString()
-            .padStart(2, "0")
-          const minutes = Math.floor((timeLeftInSeconds % 3600) / 60)
-            .toString()
-            .padStart(2, "0")
-          const seconds = (timeLeftInSeconds % 60).toString().padStart(2, "0")
-          setTimeLeft(`${hours}:${minutes}:${seconds}`)
-        } else {
-          setTimeLeft(null)
-          setSelectedMood(null)
-        }
-      }
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [lastSavedTime])
-
   const fetchLastMood = async () => {
-    if (!userId) {
-      console.error("No user ID found")
-      setLoading(false)
-      return
-    }
-
     try {
       setLoading(true)
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog/latest/${userId}`)
       const latestLog = response.data
-      console.log("Fetched mood log:", latestLog)
-
       if (latestLog) {
         setSelectedMood(latestLog.mood)
-        setLastSavedTime(new Date(latestLog.createdAt).getTime())
       } else {
         setSelectedMood(null)
-        setLastSavedTime(null)
       }
     } catch (error) {
       console.error("Error fetching mood logs", error)
       setSelectedMood(null)
-      setLastSavedTime(null)
     } finally {
       setLoading(false)
     }
@@ -96,7 +58,6 @@ const MoodLog = () => {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/moodlog/streak/${userId}?timezone=${timezone}`,
       )
-      console.log("Fetched streak data:", response.data)
       setStreakData(response.data)
     } catch (error) {
       console.error("Error fetching streak data:", error)
@@ -105,68 +66,31 @@ const MoodLog = () => {
 
   const handleClick = async (mood) => {
     if (!userId) {
-      toast.error("Please log in to select a mood.", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      })
+      toast.error("Please log in to select a mood.", { position: "top-right" })
       return
     }
 
-    const now = Date.now()
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog`, {
+        userId,
+        mood,
+      })
 
-    if (!lastSavedTime || (now - lastSavedTime) / (1000 * 60 * 60) >= 8) {
-      try {
-        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog`, {
-          userId,
-          mood,
-        })
+      const { moodLog, error, suggestion } = response.data
+
+      if (moodLog) {
         setSelectedMood(mood)
-        setLastSavedTime(now)
-        toast.success(`Mood "${mood}" saved successfully!`, {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        })
-        setTimeout(() => {
-          window.location.reload()
-        }, 1100)
+        toast.success(`Mood "${mood}" saved successfully!`, { position: "top-right" })
         fetchLastMood()
         fetchStreakData(userId)
-      } catch (error) {
-        console.error("Error saving mood:", error)
-        toast.error("Failed to save mood. Please refresh and try again.", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        })
+      } else if (error && suggestion) {
+        toast.error(`${error} ${suggestion}`, { position: "top-right", duration: 5000 })
+      } else if (error) {
+        toast.error(error, { position: "top-right" })
       }
-    } else {
-      toast.error("You can only change your mood once every 8 hours.", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      })
+    } catch (err) {
+      console.error("Error saving mood:", err)
+      toast.error("Something went wrong. Please try again.", { position: "top-right" })
     }
   }
 
@@ -185,7 +109,6 @@ const MoodLog = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-        {/* Streak Card */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -195,8 +118,7 @@ const MoodLog = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-800 flex items-center">
               <span className="mr-2 text-purple-500">
-<IconFlame/>
-                
+                <IconFlame />
               </span>
               Your Weekly Streak
             </h2>
@@ -213,7 +135,6 @@ const MoodLog = () => {
           </div>
         </motion.div>
 
-        {/* Current Mood Card */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -223,8 +144,7 @@ const MoodLog = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-800 flex items-center">
               <span className="mr-2 text-purple-500">
-
-                <IconMoodHappy/>
+                <IconMoodHappy />
               </span>
               Recent Mood
             </h2>
@@ -234,11 +154,6 @@ const MoodLog = () => {
             <div className="flex flex-col items-center justify-center">
               <img src={moodImages[selectedMood]} alt={selectedMood} className="w-24 h-24 mb-4" />
               <p className="text-lg font-medium text-gray-800 capitalize">{selectedMood}</p>
-              {timeLeft && (
-                <p className="text-sm text-gray-500 mt-2">
-                  You can update your mood in {timeLeft}
-                </p>
-              )}
             </div>
           ) : (
             <div className="text-center py-6">
@@ -248,7 +163,6 @@ const MoodLog = () => {
         </motion.div>
       </div>
 
-      {/* Mood Selection */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -256,7 +170,7 @@ const MoodLog = () => {
         className="bg-white rounded-2xl shadow-sm p-6 border border-purple-100"
       >
         <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">How are you feeling right now?</h2>
-        
+
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           {Object.entries(moodImages).map(([mood, image]) => (
             <motion.button
@@ -268,7 +182,7 @@ const MoodLog = () => {
                 selectedMood === mood
                   ? "bg-purple-100 border-2 border-purple-300"
                   : "bg-gray-50 hover:bg-gray-100 border border-gray-200"
-              } ${timeLeft !== null ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+              }`}
             >
               <img src={image} alt={mood} className="w-12 h-12 mb-2" />
               <span className="text-sm font-medium capitalize">{mood}</span>
@@ -277,7 +191,6 @@ const MoodLog = () => {
         </div>
       </motion.div>
 
-      {/* Mood Dashboard */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
