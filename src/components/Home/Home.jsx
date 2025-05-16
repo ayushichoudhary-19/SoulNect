@@ -1,93 +1,104 @@
-import {useState, useEffect} from "react";
-import FeatureCard from "./FeatureCard";
-import { NavLink } from "react-router-dom";
-import { IconArrowRight } from "../icons/TablerIcons";
+import { useState, useEffect } from 'react';
+import HeroSection from './HeroSection';
+import AboutSection from './AboutSection';
+import FeatureShowcase from './FeatureShowcase';
+import JourneySection from './JourneySection';
+import { motion, AnimatePresence } from 'framer-motion';
+import { IconBrandGithub, IconX } from "../icons/TablerIcons";
 
 const featuresData = [
-    {
-      icon: "assets/images/Home/moodlog.png",
-      link: "moodlog",
-      title: "Mood Log",
-      description: "Log your moods and track them over time with an interactive graph on the dashboard, gaining insights into your emotional well-being.",
-    },
-    {
-      icon: "assets/images/Home/journal.png",
-      link: "myjournal",
-      title: "Journal",
-      description: "Express yourself freely in a personal journal, with the ability to revisit and reflect on your thoughts and experiences over time.",
-    },
+  {
+    icon: "assets/images/Home/moodlog.png",
+    title: "Mood Log",
+    description: "Track your emotional journey with interactive visualizations that provide insights into patterns and triggers.",
+  },
+  {
+    icon: "assets/images/Home/journal.png",
+    title: "Journal",
+    description: "Express yourself freely in a secure space where your thoughts and reflections are preserved for deeper self-awareness.",
+  },
+  {
+    icon: "assets/images/Home/community.png",
+    title: "Community",
+    description: "Connect with others on similar journeys, sharing experiences and support in a safe, nurturing environment.",
+  },
+  {
+    icon: "assets/images/Home/meditate.png",
+    title: "Meditation",
+    description: "Find peace with guided practices that help calm your mind, reduce stress, and promote mindfulness in daily life.",
+  },
+  {
+    icon: "assets/images/Home/resources.png",
+    title: "Resources",
+    description: "Access curated content including videos, articles, and tools designed to support your unique mental health journey.",
+  },
+];
 
-    {
-      icon: "assets/images/Home/community.png",
-      title: "Community",
-      description: "Engage in meaningful discussions with a supportive community, fostering connections and sharing experiences for a shared journey toward emotional resilience.",
-    },
-    {
-      icon: "assets/images/Home/meditate.png",
-      link: "meditation",
-      title: "Meditation",
-      description: "Explore guided meditations to nurture your mind and soul, promoting mindfulness and relaxation for a balanced and centered lifestyle.",
-    },
-    {
-      icon: "assets/images/Home/resources.png",
-      title: "Resources",
-      description: "Access a wealth of mental health resources, including free videos and blogs, designed to support your well-being and personal growth.",
-    },
-  ];
-  
-export default function Home() {
-  const [navigateToSignIn, setNavigateToSignIn] = useState(true);
+const Home = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showGithubIcon, setShowGithubIcon] = useState(true);
 
-useEffect(() => {
+  useEffect(() => {
     const userId = localStorage.getItem('userId');
     if (userId) {
-      setNavigateToSignIn(false);
+      setIsAuthenticated(true);
     }
-    else {
-      setNavigateToSignIn(true);
-    }
-}, []);
-    return (
-        <>
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-            <aside className="flex flex-col overflow-hidden text-black rounded-lg sm:py-16">
-                <div className="hidden sm:block sm:absolute pt-12 items-center justify-center">
-                    <img className="w-3/5 sm:w-2/5 md:w-2/3 lg:w-3/4 xl:w-3/5" src="assets/images/SoulNect-Logo.png" loading="lazy"/>
-                </div>
-                <div className="relative max-w-screen-xl px-4 pb-20 pt-10 sm:py-10 sm:px-6 lg:px-8 flex-col sm:flex-row">
-                    <div className="max-w-xl space-y-8 text-center sm:text-right sm:ml-auto sm:w-1/2">
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl">
-                        What is SoulNect?
-                    </h1>
-                        <p>Soulnect is a blend of <span className="text-orange-500 font-bold">soul </span> and <span className="text-purple-600 font-bold" >connect</span>, representing the idea of connecting with oneself and others on a deeper level for emotional well-being.
-                            It is a soulful mental health web application that embraces the power of connection for holistic well-being. It focuses on fostering a deep connection with oneself, others, and the world to nurture the soul and promote emotional resilience. Through its features and resources, the app aims to guide users on a transformative journey of self-discovery, self-care, and meaningful connections.
-                        </p>
-                    </div>
-                </div>
-            </aside>
-        </div>
-        <div className="w-full flex items-center justify-center">
-          <NavLink className="p-4 flex items-center justify-center gap-2 bg-purple-500 rounded hover:bg-orange-500 duration-75 text-white" to={ navigateToSignIn? "/signin" : "/moodlog"}>
-          {"Let's Begin Healing"}
-         <IconArrowRight className="w-6 h-6" stroke={1.5}/>
-         </NavLink>
-        </div>
-        <div>
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-center my-12">
-                        Features
-                    </h1>
-        <div className="grid lg:grid-cols-3 md:grid-cols-1 gap-10 px-10 mx-10 ms:mx-3 ">
-        {featuresData.map((feature, index) => (
-            <FeatureCard
-              key={index}
-              link={feature.link}
-              icon={feature.icon}
-              title={feature.title}
-              description={feature.description}
-            />
-            ))}
-        </div>
-        </div>
-        </> 
-    );
-}
+  }, []);
+
+  return (
+    <div className="relative overflow-hidden bg-white">
+      {/* GitHub Corner with TablerIcons */}
+      <AnimatePresence>
+        {showGithubIcon && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.3 }}
+            className="fixed top-20 right-4 z-50"
+          >
+            <a 
+              href="https://github.com/ayushichoudhary-19" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="View source on GitHub"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="bg-purple-600 text-white p-3 rounded-full shadow-lg"
+              >
+                <IconBrandGithub size={28} />
+              </motion.div>
+            </a>
+            
+            {/* Close button */}
+            <motion.button
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setShowGithubIcon(false)}
+              className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full p-1 shadow-md border border-gray-200"
+              aria-label="Close GitHub icon"
+            >
+              <IconX size={12} />
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Hero Section */}
+      <HeroSection isAuthenticated={isAuthenticated} />
+      
+      {/* About Section */}
+      <AboutSection />
+      
+      {/* Feature Showcase */}
+      <FeatureShowcase features={featuresData} />
+      
+      {/* Journey Section */}
+      <JourneySection isAuthenticated={isAuthenticated} />
+    </div>
+  );
+};
+
+export default Home;

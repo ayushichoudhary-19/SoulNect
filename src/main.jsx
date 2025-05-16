@@ -1,4 +1,5 @@
 import ReactDOM from "react-dom/client";
+import React from "react";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/Layout/Layout.jsx";
@@ -18,6 +19,7 @@ import NewPostPage from "./pages/NewPostPage.jsx";
 import PostPage from "./pages/PostPage.jsx";
 import JournalEntriesPage from "./pages/JournalEntriesPage.jsx";
 import { Toaster } from "react-hot-toast"
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 const navrouter = createBrowserRouter([
   {
@@ -25,6 +27,7 @@ const navrouter = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: "", element: <Home /> },
+      { path: "home", element: <Home /> },
       { path: "moodlog", element: <MoodLogPage /> },
       { path: "myjournal", element: <AddJournalEntry /> },
       { path: "meditation", element: <MeditationPage /> },
@@ -43,10 +46,12 @@ const navrouter = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  // <React.StrictMode>
+  <React.StrictMode>
+    <ErrorBoundary>
   <UserProvider>
     <RouterProvider router={navrouter} />
     <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
   </UserProvider>
-  // </React.StrictMode>,
+  </ErrorBoundary>
+  </React.StrictMode>,
 );

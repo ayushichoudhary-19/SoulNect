@@ -39,7 +39,7 @@ const SignIn = () => {
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("name", name);
         login(data.userId);
-        navigate("/");
+        navigate("/home");
         window.location.reload();
       } else {
         setError(data.message || "Authentication failed");

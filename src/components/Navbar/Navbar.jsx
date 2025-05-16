@@ -36,15 +36,13 @@ const Navbar = () => {
   }, [location]);
 
   const navLinks = [
-    { to: '/', label: 'Home' },
+    { to: '/home', label: 'Home' },
     { to: '/moodlog', label: 'Mood Log' },
     { to: '/myjournal', label: 'My Journal' },
     { to: '/community', label: 'Community' },
     { to: '/meditation', label: 'Meditation' },
     { to: '/resources', label: 'Resources' },
   ];
-
-  // const isActive = (path) => location.pathname === path;
 
   return (
     <header className="sticky top-0 z-50 shadow-md backdrop-blur bg-white/90">
@@ -99,7 +97,7 @@ const Navbar = () => {
           </ul>
         </div>
 
-        {/* Mobile Nav (animated dropdown) */}
+        {/* Mobile Nav */}
         <div
           className={`lg:hidden transition-all duration-300 overflow-hidden ${
             mobileMenuOpen ? 'max-h-[1000px] mt-4' : 'max-h-0'

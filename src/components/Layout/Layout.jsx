@@ -1,13 +1,17 @@
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
-import {Outlet} from 'react-router-dom'
-export default function Layout(){
-    return(
-        <>
-        <Navbar/>
-        <Outlet/>
-        <Footer/>
-        </>
+import { Outlet, useLocation } from "react-router-dom";
 
-    )
+export default function Layout() {
+  const location = useLocation();
+  const isLandingPage = location.pathname === "/";
+  const isAuthPage = location.pathname === "/signin";
+
+  return (
+    <>
+      {!isLandingPage && !isAuthPage && <Navbar />}
+      <Outlet />
+      {isLandingPage && <Footer />}
+    </>
+  );
 }
