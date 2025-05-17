@@ -7,77 +7,77 @@ import { Tooltip } from "react-tooltip"
 import { motion, AnimatePresence } from "framer-motion"
 import { IconBook } from "../icons/TablerIcons";
 import { useNavigate } from "react-router-dom";
-import { useRef } from "react";
 
-function PreviousEntries({ fullWidth = false, limit }) {
+function PreviousEntries({ fullWidth = false, limit, newEntry }) {
   const [entries, setEntries] = useState([])
   const [selectedEntry, setSelectedEntry] = useState(null)
   const [userId] = useState(localStorage.getItem("userId"))
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  const entriesRef = useRef([]);
-
-const fetchEntries = async () => {
-  try {
-    setLoading(true);
-    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/journal/${userId}`);
-    entriesRef.current = response.data;
-    setEntries(response.data);
-  } catch (error) {
-    console.error("Failed to fetch entries", error);
-  } finally {
-    setLoading(false);
-  }
-}
-
-useEffect(() => {
-  const handleNewEntry = (event) => {
-    if (event.detail && event.detail.entry) {
-      const newEntries = [event.detail.entry, ...entriesRef.current];
-      entriesRef.current = newEntries;
-      setEntries(newEntries);
-    } else {
-      fetchEntries();
+  const fetchEntries = async () => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/journal/${userId}`);
+      setEntries(response.data);
+    } catch (error) {
+      console.error("Failed to fetch entries", error);
+    } finally {
+      setLoading(false);
     }
   }
 
-  window.addEventListener('journalEntryAdded', handleNewEntry);
-  return () => window.removeEventListener('journalEntryAdded', handleNewEntry);
-}, []);
-
-
   useEffect(() => {
-    if (userId) {
-      fetchEntries()
-    } else {
-      setLoading(false)
-    }
-  }, [userId])
+    fetchEntries();
+  }, [userId]);
 
+  // Update entries when a new entry is added via props
   useEffect(() => {
-    const handleNewEntry = (event) => {
-      if (event.detail && event.detail.entry) { 
-        setEntries(prevEntries => [event.detail.entry, ...prevEntries])
-      } else {
-        fetchEntries()
+    if (newEntry && newEntry._id) {
+      // Check if the entry already exists to avoid duplicates
+      const entryExists = entries.some(entry => entry._id === newEntry._id);
+      
+      if (!entryExists) {
+        setEntries(prevEntries => [newEntry, ...prevEntries]);
       }
     }
+  }, [newEntry]);
 
-    window.addEventListener('journalEntryAdded', handleNewEntry)
+  // Keep the event listener for backward compatibility
+  useEffect(() => {
+    const handleNewEntry = (event) => {
+      if (event.detail && event.detail.entry) {
+        const newEntryData = event.detail.entry;
+        // Check if the entry already exists to avoid duplicates
+        setEntries(prevEntries => {
+          const entryExists = prevEntries.some(entry => entry._id === newEntryData._id);
+          if (!entryExists) {
+            return [newEntryData, ...prevEntries];
+          }
+          return prevEntries;
+        });
+      }
+    };
+
+    window.addEventListener('journalEntryAdded', handleNewEntry);
     
     return () => {
-      window.removeEventListener('journalEntryAdded', handleNewEntry)
-    }
-  }, [userId])
+      window.removeEventListener('journalEntryAdded', handleNewEntry);
+    };
+  }, []); // Remove the entries dependency
 
   const handleCardClick = (entry) => {
-    setSelectedEntry(entry)
-  }
+    setSelectedEntry(entry);
+  };
 
   const closePopup = () => {
-    setSelectedEntry(null)
-  }
+    setSelectedEntry(null);
+  };
 
   const formatDateParts = (dateString) => {
     if (!dateString) {
@@ -94,24 +94,24 @@ useEffect(() => {
       const options = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
       return new Intl.DateTimeFormat("en-GB", options).format(date);
     } catch (error) {
-      console.error("Error formatting date:", error);
       return "Date error";
     }
-  }
+  };
 
   const handleDeleteClick = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this entry?")) return
+    if (!window.confirm("Are you sure you want to delete this entry?")) return;
 
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/journal/${id}`)
-      setEntries(entries.filter((entry) => entry._id !== id))
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/journal/${id}`);
+      setEntries(entries.filter((entry) => entry._id !== id));
+      
       if (selectedEntry && selectedEntry._id === id) {
-        setSelectedEntry(null)
+        setSelectedEntry(null);
       }
     } catch (error) {
-      console.error("Failed to delete entry", error)
+      console.error("Failed to delete entry", error);
     }
-  }
+  };
 
   const displayedEntries = limit ? entries.slice(0, limit) : entries;
 
@@ -125,7 +125,7 @@ useEffect(() => {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -187,7 +187,7 @@ useEffect(() => {
                   </p>
                 </div>
               </motion.div>
-            )
+            );
           })}
           
           {!fullWidth && entries.length > (limit || 5) && (
@@ -235,8 +235,8 @@ useEffect(() => {
                     data-tooltip-id="edit-tooltip"
                     data-tooltip-content="Edit"
                     onClick={() => {
-                      closePopup()
-                      window.location.href = `/myjournal?editId=${selectedEntry._id}`
+                      closePopup();
+                      navigate(`/myjournal?editId=${selectedEntry._id}`);
                     }}
                     className="hover:bg-purple-50 p-2 rounded cursor-pointer transition-colors"
                   >
@@ -274,7 +274,7 @@ useEffect(() => {
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }
 
-export default PreviousEntries
+export default PreviousEntries;

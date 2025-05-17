@@ -42,7 +42,7 @@ export default function PostCard({ post, author, upvotecount, onClick }) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-xs font-medium text-purple-500">
+                  <span className="text-xs font-medium bg-purple-100 rounded-full p-4 text-purple-500">
                     {author?.name?.charAt(0) || "A"}
                   </span>
                 )}

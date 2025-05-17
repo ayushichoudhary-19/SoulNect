@@ -39,7 +39,6 @@ export default function PostPage() {
         setUpvoted(postRes.data.upvotedBy?.includes(userId));
         setComments(commentsRes.data);
       } catch (error) {
-        console.error("Error fetching post data:", error);
         toast.error("Failed to load post");
       } finally {
         setIsLoading(false);
@@ -140,7 +139,6 @@ export default function PostPage() {
       setEditingPost(false);
       toast.success('Post updated successfully');
     } catch (error) {
-      console.error('Failed to update post:', error);
       toast.error('Failed to update post');
     }
   };
@@ -159,7 +157,6 @@ export default function PostPage() {
         toast.success('Post deleted successfully');
         navigate('/community');
       } catch (error) {
-        console.error('Failed to delete post:', error);
         toast.error('Failed to delete post');
       }
     }
@@ -421,9 +418,19 @@ export default function PostPage() {
         
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
           <div className="flex items-center gap-2">
-            <div className="bg-purple-100 text-purple-700 rounded-full w-6 h-6 flex items-center justify-center text-xs font-medium">
-              {getInitials(post.createdBy?.name)}
-            </div>
+            {post.createdBy?.avatar? (
+              <div className="w-6 h-6 rounded-full overflow-hidden bg-white flex-shrink-0 flex items-center justify-center">
+                <img
+                  src={getAvatarUrl(post.createdBy.avatar)}
+                  alt={post.createdBy?.name || "User"}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="bg-purple-100 text-purple-700 rounded-full w-6 h-6 flex items-center justify-center text-xs font-medium">
+                {getInitials(post.createdBy?.name)}
+              </div>
+            )}
             <span>{post.createdBy?.name || 'Anonymous'}</span>
           </div>
           <span>•</span>

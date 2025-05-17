@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 
-function JournalForm() {
+function JournalForm({ onEntryAdded }) {
   const [journalEntry, setJournalEntry] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [currDate, setCurrDate] = useState(new Date());
@@ -75,10 +75,10 @@ function JournalForm() {
       toast.error("Please log in and write something first!");
       return;
     }
-  
+
     try {
       let newEntryData;
-  
+
       if (editId) {
         await axios.put(
           `${import.meta.env.VITE_BACKEND_URL}/api/journal/${editId}`,
@@ -86,27 +86,34 @@ function JournalForm() {
         );
         toast.success("Entry updated!");
       } else {
-        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/journal`, {
-          userId,
-          date: new Date().toISOString(),
-          content: journalEntry,
-        });
-  
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/journal`,
+          {
+            userId,
+            date: new Date().toISOString(),
+            content: journalEntry,
+          }
+        );
+
         newEntryData = response.data;
-  
-        confetti({ /* ... */ });
+
+        confetti({});
         toast.success("New entry added!");
-  
-        // ✅ Clear the editor after save
+
         setJournalEntry("");
-  
-        // Notify other components (like PreviousEntries)
+        
+        // Call the prop function to update parent component
+        if (onEntryAdded && typeof onEntryAdded === "function") {
+          onEntryAdded(newEntryData);
+        }
+        
+        // Still dispatch event for backward compatibility
         const entryAddedEvent = new CustomEvent("journalEntryAdded", {
-          detail: { entry: newEntryData }
+          detail: { entry: newEntryData },
         });
         window.dispatchEvent(entryAddedEvent);
       }
-  
+
       setTimeout(() => {
         navigate("/myjournal");
       }, 1000);
@@ -114,8 +121,6 @@ function JournalForm() {
       toast.error("Error saving entry.");
     }
   };
-  
-  
 
   const handleEdit = () => {
     setIsEditing(true);

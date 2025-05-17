@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { motion } from "framer-motion"
 import { useLocation, useNavigate } from "react-router-dom"
 import JournalForm from "../components/Journal/JournalForm"
@@ -9,11 +10,16 @@ import JournalEntryMessage from "../components/Journal/JournalEntryMessage"
 import { IconArrowLeft } from "../components/icons/TablerIcons";
 
 function AddJournalEntry() {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const searchParams = new URLSearchParams(location.search)
-  const editId = searchParams.get('editId')
-  const isEditMode = !!editId
+  const [newEntry, setNewEntry] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
+  const editId = searchParams.get('editId');
+  const isEditMode = !!editId;
+
+  const handleEntryAdded = (entry) => {
+    setNewEntry(entry.journalEntry);
+  };
 
   return (
     <motion.div
@@ -58,7 +64,7 @@ function AddJournalEntry() {
           transition={{ delay: 0.3 }}
           className={`w-full ${isEditMode ? 'lg:w-3/5 mx-auto' : 'lg:w-3/5'}`}
         >
-          <JournalForm editId={editId} />
+          <JournalForm editId={editId} onEntryAdded={handleEntryAdded} />
         </motion.div>
 
         {!isEditMode && (
@@ -68,7 +74,7 @@ function AddJournalEntry() {
             transition={{ delay: 0.4 }}
             className="w-full lg:w-2/5 border border-purple-100 rounded-xl shadow-sm p-4"
           >
-            <PreviousEntries limit={6} />
+            <PreviousEntries limit={6} newEntry={newEntry} />
           </motion.div>
         )}
       </div>

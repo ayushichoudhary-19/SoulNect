@@ -44,7 +44,6 @@ const Onboarding = () => {
       toast.success("Avatar set successfully");
       navigate("/home");
     } catch (error) {
-      console.error("Failed to set avatar:", error);
       toast.error("Failed to set avatar");
     } finally {
       setIsSubmitting(false);

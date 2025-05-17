@@ -63,7 +63,6 @@ const MoodLog = () => {
       const streakResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog/streak/${userId}?timezone=${timezone}`);
       setStreakData(streakResponse.data);
     } catch (error) {
-      console.error("Error fetching mood data", error);
       setSelectedMood(null);
     } finally {
       setLoading(false);
@@ -85,7 +84,7 @@ const MoodLog = () => {
         mood,
       });
   
-      const { moodLog, error, suggestion } = response.data;
+      const moodLog = response.data;
   
       if (moodLog) {
         toast.success(`Mood "${mood}" saved successfully!`, { position: "top-right" });
@@ -94,18 +93,8 @@ const MoodLog = () => {
         setSelectedMood(mood);
       
         setTimeout(fetchMoodData, 300);
-      } else if (error && suggestion) {
-        fetchMoodData();
-        toast.error(`${error} ${suggestion}`, { position: "top-right", duration: 5000 });
-      } else if (error) {
-        fetchMoodData();
-        toast.error(error, { position: "top-right" });
-      } else if (response.data.message) {
-        fetchMoodData();
-        toast.error(response.data.message, { position: "top-right" });
-      }          
+      }    
     } catch (err) {
-      console.error("Error saving mood:", err);
       if (err?.response?.data?.message?.includes("limit")) {
         setLimitReached(true);
       } else {

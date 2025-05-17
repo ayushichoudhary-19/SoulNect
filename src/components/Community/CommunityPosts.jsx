@@ -88,7 +88,7 @@ export default function CommunityPosts() {
       try {
         await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/posts/${postId}`)
         toast.success("Post deleted successfully")
-        // Remove the deleted post from state
+
         setAllPosts(allPosts.filter((post) => post._id !== postId))
         setPosts(posts.filter((post) => post._id !== postId))
       } catch (error) {

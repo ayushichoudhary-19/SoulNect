@@ -35,7 +35,7 @@ const AuthGuard = ({ children }) => {
           >
             <div className="w-16 h-16 mb-4 relative">
               <motion.div
-                className="absolute inset-0 rounded-full border-t-4 border-purple-600"
+                className="absolute inset-0 rounded-full border-4 border-white border-t-purple-600 border-b-purple-600"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
               />

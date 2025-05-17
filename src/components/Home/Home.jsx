@@ -5,6 +5,7 @@ import FeatureShowcase from './FeatureShowcase';
 import JourneySection from './JourneySection';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IconBrandGithub, IconX } from "../icons/TablerIcons";
+import { useLocation } from 'react-router-dom';
 
 const featuresData = [
   {
@@ -37,6 +38,7 @@ const featuresData = [
 const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showGithubIcon, setShowGithubIcon] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -45,9 +47,13 @@ const Home = () => {
     }
   }, []);
 
+  useEffect(() => {
+    // Only show GitHub icon if we're on the root path '/'
+    setShowGithubIcon(location.pathname === '/');
+  }, [location.pathname]);
+
   return (
     <div className="relative overflow-hidden bg-white">
-      {/* GitHub Corner with TablerIcons */}
       <AnimatePresence>
         {showGithubIcon && (
           <motion.div

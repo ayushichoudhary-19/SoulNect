@@ -31,7 +31,6 @@ export default function NewPost() {
       setContent(post.content);
       setTags(post.tags ? post.tags.join(', ') : '');
     } catch (error) {
-      console.error('Failed to fetch post for editing', error);
       toast.error('Failed to load post for editing');
       navigate('/community');
     }
@@ -78,7 +77,6 @@ export default function NewPost() {
       }
       navigate('/community');
     } catch (err) {
-      console.error('Failed to create post', err);
       toast.error("Failed to create your post. Please try again.");
     } finally {
       setIsSubmitting(false);

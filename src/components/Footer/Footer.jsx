@@ -82,8 +82,6 @@ export default function Footer() {
             </motion.a>
           </div>
         </div>
-        
-        {/* Made with Love Section - Highlighted */}
         <motion.div 
           className="flex justify-center mt-10 mb-6"
           initial={{ opacity: 0, y: 10 }}

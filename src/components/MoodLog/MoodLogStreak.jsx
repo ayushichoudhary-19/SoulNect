@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 const MoodLogStreak = () => {
   const [streakData, setStreakData] = useState([]);
@@ -30,7 +31,7 @@ const MoodLogStreak = () => {
       );
       setStreakData(response.data);
     } catch (error) {
-      console.error("Error fetching streak data:", error);
+      toast.error("Failed to fetch streak data");
     } finally {
       setLoading(false);
     }

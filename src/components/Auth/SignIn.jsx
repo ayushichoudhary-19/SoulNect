@@ -50,7 +50,6 @@ const SignIn = () => {
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
-      console.error(err);
     } finally {
       setIsSubmitting(false);
     }

@@ -39,7 +39,6 @@ const MoodDashboard = () => {
       setMoodData(formatted);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching mood data:", error);
       setLoading(false);
     }
   };
