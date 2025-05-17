@@ -8,7 +8,6 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const userId = localStorage.getItem('userId');
     if (userId) {
-      console.log('User ID found:', userId);
       setUser({ userId });
     }
   }, []);

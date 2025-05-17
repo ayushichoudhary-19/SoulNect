@@ -3,6 +3,8 @@ export {
     IconArrowRight,
     IconArrowUp,
     IconSend,
+    IconChevronLeft, 
+    IconChevronRight,
     IconPlayerPlay, 
     IconVolume, 
     IconClock,

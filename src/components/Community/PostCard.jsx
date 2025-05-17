@@ -1,27 +1,9 @@
 import { IconArrowUp } from "../icons/TablerIcons";
 import { formatDistanceToNow } from 'date-fns';
-import { useState, useRef, useEffect } from 'react';
 import { motion, } from 'framer-motion';
+import { getAvatarUrl } from "../../utils/avatarMap";
 
-export default function PostCard({ post, author, upvotecount, onClick, onEdit, onDelete }) {
-  const [showMenu, setShowMenu] = useState(false);
-  const menuRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowMenu(false);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleMenuClick = (e) => {
-    e.stopPropagation();
-    setShowMenu(!showMenu);
-  };
+export default function PostCard({ post, author, upvotecount, onClick }) {
 
   return (
     <motion.div
@@ -52,10 +34,10 @@ export default function PostCard({ post, author, upvotecount, onClick, onEdit, o
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center">
-              <div className="w-7 h-7 rounded-full overflow-hidden bg-purple-50 flex-shrink-0 flex items-center justify-center">
-                {author?.profilePic ? (
+              <div className="w-7 h-7 rounded-full overflow-hidden bg-white-50 flex-shrink-0 flex items-center justify-center">
+                {author?.avatar ? (
                   <img
-                    src={author.profilePic || "/placeholder.svg"}
+                    src={getAvatarUrl(author.avatar)}
                     alt={author?.name || "User"}
                     className="w-full h-full object-cover"
                   />

@@ -12,7 +12,7 @@ export default function Layout() {
     <>
       {!isLandingPage && !isAuthPage && !isMeditationSession && <Navbar />}
       <Outlet />
-      {isLandingPage && <Footer />}
+      <Footer />
     </>
   );
 }

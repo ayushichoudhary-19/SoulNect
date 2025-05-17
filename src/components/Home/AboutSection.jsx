@@ -75,7 +75,7 @@ const AboutSection = () => {
               </div>
               
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-8 text-center">
-                <h3 className="text-2xl md:text-3xl font-bold mb-4">Our Mission</h3>
+                <h3 className="text-2xl md:text-3xl font-bold mb-4">Mission</h3>
                 <p className="text-white/90 mb-6">
                   To create a safe space where individuals can nurture their mental well-being through 
                   self-reflection, community support, and mindfulness practices.

@@ -1,78 +1,81 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import axios from "axios"
-import { Tooltip } from "react-tooltip"
-import { motion } from "framer-motion"
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Tooltip } from "react-tooltip";
+import { motion } from "framer-motion";
 
 const MoodLogStreak = () => {
-  const [streakData, setStreakData] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [streakData, setStreakData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId")
+    const userId = localStorage.getItem("userId");
     if (userId) {
-      fetchStreakData(userId)
+      fetchStreakData(userId);
     } else {
-      setStreakData(generateDefaultStreakData())
-      setLoading(false)
+      setStreakData(generateDefaultStreakData());
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   const fetchStreakData = async (userId) => {
     try {
-      setLoading(true)
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+      setLoading(true);
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/moodlog/streak/${userId}?timezone=${timezone}`,
-      )
-      console.log("Fetched streak data:", response.data)
-      setStreakData(response.data)
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/moodlog/streak/${userId}?timezone=${timezone}`
+      );
+      setStreakData(response.data);
     } catch (error) {
-      console.error("Error fetching streak data:", error)
+      console.error("Error fetching streak data:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const generateDefaultStreakData = () => {
-    const weekDays = []
+    const weekDays = [];
     for (let i = 5; i >= -1; i--) {
-      const day = new Date()
-      day.setDate(day.getDate() - i)
-      const formattedDate = day.toISOString().split("T")[0]
-      weekDays.push({ date: formattedDate, count: 0 })
+      const day = new Date();
+      day.setDate(day.getDate() - i);
+      const formattedDate = day.toISOString().split("T")[0];
+      weekDays.push({ date: formattedDate, count: 0 });
     }
-    return weekDays
-  }
+    return weekDays;
+  };
 
   const getColor = (count) => {
-    if (count === 1) return "#90EE90"
-    if (count === 2) return "#32CD32"
-    if (count >= 3) return "#006400"
-    return "white"
-  }
+    if (count === 1) return "#90EE90";
+    if (count === 2) return "#32CD32";
+    if (count >= 3) return "#006400";
+    return "white";
+  };
 
   const renderWeek = () => {
-    const weekDays = []
+    const weekDays = [];
     for (let i = 5; i >= -1; i--) {
-      const day = new Date()
-      day.setDate(day.getDate() - i)
-      weekDays.push(day)
+      const day = new Date();
+      day.setDate(day.getDate() - i);
+      weekDays.push(day);
     }
 
     return weekDays.map((day, index) => {
-      const formattedDate = day.toISOString().split("T")[0]
-      const dayData = streakData.find((d) => d.date === formattedDate)
-      const count = dayData ? dayData.count : 0
+      const formattedDate = day.toISOString().split("T")[0];
+      const dayData = streakData.find((d) => d.date === formattedDate);
+      const count = dayData ? dayData.count : 0;
 
       const tooltipText =
         count > 0
-          ? `Logged ${count} time${count > 1 ? "s" : ""} on ${day.toLocaleDateString("en-US", {
+          ? `Logged ${count} time${
+              count > 1 ? "s" : ""
+            } on ${day.toLocaleDateString("en-US", {
               month: "long",
               day: "numeric",
             })}`
-          : "No mood logged"
+          : "No mood logged";
 
       return (
         <motion.div
@@ -94,9 +97,9 @@ const MoodLogStreak = () => {
             {day.toLocaleDateString("en-US", { weekday: "short" })}
           </span>
         </motion.div>
-      )
-    })
-  }
+      );
+    });
+  };
 
   if (loading)
     return (
@@ -109,7 +112,7 @@ const MoodLogStreak = () => {
           </div>
         </div>
       </div>
-    )
+    );
 
   return (
     <div className="flex items-center justify-center">
@@ -119,10 +122,12 @@ const MoodLogStreak = () => {
         transition={{ duration: 0.4 }}
         className="flex flex-col justify-center items-center px-0 md:px-7 py-4 transition duration-300 ease-in-out bg-white"
       >
-        <div className="flex justify-between gap-1 md:gap-3">{renderWeek()}</div>
+        <div className="flex justify-between gap-1 md:gap-3">
+          {renderWeek()}
+        </div>
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default MoodLogStreak
+export default MoodLogStreak;

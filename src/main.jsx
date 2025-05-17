@@ -21,6 +21,7 @@ import JournalEntriesPage from "./pages/JournalEntriesPage.jsx";
 import { Toaster } from "react-hot-toast"
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import AuthGuard from "./components/Auth/AuthGuard.jsx";
+import Onboarding from "./components/Auth/Onboarding.jsx";
 
 const navrouter = createBrowserRouter([
   {
@@ -41,6 +42,7 @@ const navrouter = createBrowserRouter([
       { path: "meditation/completed", element: <MeditationCompletedPage /> },
       { path: "meditation/history", element: <MeditationHistoryPage /> },
       { path: "signin", element: <SignIn /> },
+      { path: "onboarding", element: <Onboarding /> },
       { path: "community", element: <CommunityPage /> },
       { path: "community/new", element: <NewPostPage /> },
       { path: "community/:postId", element: <PostPage /> },

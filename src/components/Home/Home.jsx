@@ -29,7 +29,7 @@ const featuresData = [
   },
   {
     icon: "assets/images/Home/resources.png",
-    title: "Resources",
+    title: "Resources (Coming Soon)",
     description: "Access curated content including videos, articles, and tools designed to support your unique mental health journey.",
   },
 ];

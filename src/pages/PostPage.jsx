@@ -4,6 +4,7 @@ import { IconArrowUp, IconMessage, IconEdit, IconTrash, IconDotsVertical, IconAr
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getAvatarUrl } from "../utils/avatarMap";
 
 export default function PostPage() {
   const location = useLocation();
@@ -66,7 +67,6 @@ export default function PostPage() {
         postId,
         content: newComment,
         userId,
-        name: localStorage.getItem('name') || 'Anonymous',
       });
       setComments([...comments, res.data]);
       setNewComment('');
@@ -86,7 +86,6 @@ export default function PostPage() {
         parentId,
         content,
         userId,
-        name: localStorage.getItem('name') || 'Anonymous',
       });
       setComments([...comments, res.data]);
       setReplyMap({ ...replyMap, [parentId]: '' });
@@ -133,7 +132,8 @@ export default function PostPage() {
     
     try {
       await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/posts/${postId}`, { 
-        content: editedPostContent 
+        content: editedPostContent,
+        userId
       });
       
       setPost({...post, content: editedPostContent});
@@ -153,7 +153,9 @@ export default function PostPage() {
   const handleDeletePost = async () => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       try {
-        await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/posts/${postId}`);
+        await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/posts/${postId}`, {
+          data: { userId }
+        });
         toast.success('Post deleted successfully');
         navigate('/community');
       } catch (error) {
@@ -180,9 +182,19 @@ export default function PostPage() {
           <div className="bg-white border border-gray-100 p-4 rounded-lg shadow-sm">
             <div className="flex justify-between mb-2 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <div className="bg-purple-100 text-purple-700 rounded-full w-7 h-7 flex items-center justify-center text-xs font-medium">
-                  {getInitials(comment.createdBy?.name)}
-                </div>
+                {comment.createdBy?.avatar ? (
+                  <div className="w-7 h-7 rounded-full overflow-hidden bg-white flex-shrink-0 flex items-center justify-center">
+                    <img
+                      src={getAvatarUrl(comment.createdBy.avatar)}
+                      alt={comment.createdBy?.name || "User"}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="bg-purple-100 text-purple-700 rounded-full w-7 h-7 flex items-center justify-center text-xs font-medium">
+                    {getInitials(comment.createdBy?.name)}
+                  </div>
+                )}
                 <span className="font-medium">{comment.createdBy?.name || 'Anonymous'}</span>
               </div>
               <div className="text-xs text-gray-400">{new Date(comment.createdAt).toLocaleString()}</div>

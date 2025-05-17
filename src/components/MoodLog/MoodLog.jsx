@@ -1,22 +1,26 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { toast } from "react-hot-toast"
-import axios from "axios"
-import MoodLogStreak from "./MoodLogStreak"
-import MoodDashboard from "../MoodDashboard/moodDashboard"
-import { useUser } from "../../store/userContext"
-import { motion } from "framer-motion"
-import { IconFlame, IconMoodHappy } from "../icons/TablerIcons"
+import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
+import axios from "axios";
+import MoodLogStreak from "./MoodLogStreak";
+import MoodDashboard from "../MoodDashboard/moodDashboard";
+import { useUser } from "../../store/userContext";
+import { motion } from "framer-motion";
+import { IconFlame, IconMoodHappy } from "../icons/TablerIcons";
+import MoodLimitModal from "./MoodLimitModal";
 
 const moodImages = {
   "very happy":
     "https://cdn.shopify.com/s/files/1/1061/1924/files/Smiling_Emoji_with_Smiling_Eyes.png?9898922749706957214",
-  happy: "https://emojiisland.com/cdn/shop/products/Smiling_Face_Emoji_with_Blushed_Cheeks_large.png?v=1571606036",
-  neutral: "https://cdn.shopify.com/s/files/1/1061/1924/files/Neutral_Face_Emoji.png?9898922749706957214",
+  happy:
+    "https://emojiisland.com/cdn/shop/products/Smiling_Face_Emoji_with_Blushed_Cheeks_large.png?v=1571606036",
+  neutral:
+    "https://cdn.shopify.com/s/files/1/1061/1924/files/Neutral_Face_Emoji.png?9898922749706957214",
   sad: "https://cdn.shopify.com/s/files/1/1061/1924/files/Sad_Face_Emoji.png?9898922749706957214",
-  "very sad": "https://cdn.shopify.com/s/files/1/1061/1924/files/Crying_Face_Emoji.png?9898922749706957214",
-}
+  "very sad":
+    "https://cdn.shopify.com/s/files/1/1061/1924/files/Crying_Face_Emoji.png?9898922749706957214",
+};
 
 const MoodLog = () => {
   const { user } = useUser()
@@ -24,75 +28,93 @@ const MoodLog = () => {
   const [selectedMood, setSelectedMood] = useState(null)
   const [streakData, setStreakData] = useState([])
   const [loading, setLoading] = useState(true)
+  const [moodLogs, setMoodLogs] = useState([])
+  const [limitReached, setLimitReached] = useState(false);
 
   useEffect(() => {
     if (userId) {
-      fetchLastMood()
-      fetchStreakData(userId)
+      fetchMoodData();
     } else {
-      setLoading(false)
+      setLoading(false);
     }
   }, [userId])
 
-  const fetchLastMood = async () => {
+  const fetchMoodData = async () => {
     try {
-      setLoading(true)
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog/latest/${userId}`)
-      const latestLog = response.data
-      if (latestLog) {
-        setSelectedMood(latestLog.mood)
-      } else {
-        setSelectedMood(null)
+      setLoading(true);
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog/${userId}?timezone=${timezone}`);
+      const logs = response.data;
+      setMoodLogs(logs);
+  
+      try {
+        const sortedLogs = [...logs].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        if (sortedLogs[0]?.mood) {
+          setSelectedMood(sortedLogs[0].mood);
+        } else {
+          setSelectedMood(null);
+        }
+      } catch (err) {
+        console.warn("Error parsing latest mood:", err);
+        setSelectedMood(null);
       }
+  
+      const streakResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog/streak/${userId}?timezone=${timezone}`);
+      setStreakData(streakResponse.data);
     } catch (error) {
-      console.error("Error fetching mood logs", error)
-      setSelectedMood(null)
+      console.error("Error fetching mood data", error);
+      setSelectedMood(null);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-
-  const fetchStreakData = async (userId) => {
-    try {
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/moodlog/streak/${userId}?timezone=${timezone}`,
-      )
-      setStreakData(response.data)
-    } catch (error) {
-      console.error("Error fetching streak data:", error)
-    }
-  }
+  };
+  
 
   const handleClick = async (mood) => {
     if (!userId) {
-      toast.error("Please log in to select a mood.", { position: "top-right" })
-      return
+      toast.error("Please log in to select a mood.", { position: "top-right" });
+      return;
     }
 
+    setSelectedMood(mood);
+  
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/moodlog`, {
         userId,
         mood,
-      })
-
-      const { moodLog, error, suggestion } = response.data
-
+      });
+  
+      const { moodLog, error, suggestion } = response.data;
+  
       if (moodLog) {
-        setSelectedMood(mood)
-        toast.success(`Mood "${mood}" saved successfully!`, { position: "top-right" })
-        fetchLastMood()
-        fetchStreakData(userId)
+        toast.success(`Mood "${mood}" saved successfully!`, { position: "top-right" });
+      
+        setMoodLogs(prev => [moodLog, ...prev]);
+        setSelectedMood(mood);
+      
+        setTimeout(fetchMoodData, 300);
       } else if (error && suggestion) {
-        toast.error(`${error} ${suggestion}`, { position: "top-right", duration: 5000 })
+        fetchMoodData();
+        toast.error(`${error} ${suggestion}`, { position: "top-right", duration: 5000 });
       } else if (error) {
-        toast.error(error, { position: "top-right" })
-      }
+        fetchMoodData();
+        toast.error(error, { position: "top-right" });
+      } else if (response.data.message) {
+        fetchMoodData();
+        toast.error(response.data.message, { position: "top-right" });
+      }          
     } catch (err) {
-      console.error("Error saving mood:", err)
-      toast.error("Something went wrong. Please try again.", { position: "top-right" })
+      console.error("Error saving mood:", err);
+      if (err?.response?.data?.message?.includes("limit")) {
+        setLimitReached(true);
+      } else {
+        toast.error("Something went wrong. Please try again.", { position: "top-right" });
+      }      
+      setTimeout(fetchMoodData, 200);
     }
-  }
+  };
+  
 
   if (loading) {
     return (
@@ -103,7 +125,7 @@ const MoodLog = () => {
           <div className="h-64 bg-gray-200 rounded-lg"></div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -129,7 +151,9 @@ const MoodLog = () => {
           <div className="mt-6 text-center">
             <p className="text-gray-600 mb-2">
               {streakData.length > 0
-                ? `You've logged your mood ${streakData.length} day${streakData.length !== 1 ? "s" : ""} in a row!`
+                ? `You've logged your mood ${streakData.length} day${
+                    streakData.length !== 1 ? "s" : ""
+                  } in a row!`
                 : "Start your mood tracking journey today!"}
             </p>
           </div>
@@ -202,8 +226,9 @@ const MoodLog = () => {
         </div>
         <MoodDashboard />
       </motion.div>
+      <MoodLimitModal open={limitReached} onClose={() => setLimitReached(false)} />
     </div>
-  )
-}
+  );
+};
 
-export default MoodLog
+export default MoodLog;
